@@ -14,7 +14,6 @@ describe("ConstitutionalPolicy invariants", () => {
         kind: "Test",
         status: "Active",
         createdAt: "2026-02-06T00:00:00.000Z",
-        // @ts-expect-error - intentional missing author
         author: undefined
       }
     } as any, policy);

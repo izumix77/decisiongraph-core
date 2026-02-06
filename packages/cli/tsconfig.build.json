@@ -1,13 +1,15 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-
-    // ★ここが肝：monorepo の paths を打ち消す
-    "baseUrl": ".",
-    "paths": {}
+    "composite": true
   },
+  "references": [
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../schema/tsconfig.build.json" },
+    { "path": "../io-json/tsconfig.build.json" }
+  ],
   "include": ["src/**/*.ts"],
   "exclude": ["test/**", "dist/**"]
 }
