@@ -1,11 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "composite": true
+    "noEmit": true,
+    "rootDir": "."
   },
-  "include": [
-    "src",
-    "test"
+  "include": ["src", "test"],
+  "references": [
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../schema/tsconfig.build.json" }
   ]
 }

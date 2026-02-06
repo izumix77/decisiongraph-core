@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@decisiongraph/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@decisiongraph/schema": [
+        "packages/schema/src/index.ts"
+      ]
+    }
+  }
+}
