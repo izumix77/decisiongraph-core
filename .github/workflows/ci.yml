@@ -20,4 +20,6 @@ jobs:
           cache: pnpm
 
       - run: pnpm i --frozen-lockfile
+      - name: TypeScript project graph check
+        run: pnpm exec tsc -b
       - run: pnpm -r build
