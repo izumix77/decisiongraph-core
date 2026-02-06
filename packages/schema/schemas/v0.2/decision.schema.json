@@ -1,0 +1,21 @@
+{
+  "$id": "https://decisiongraph.dev/schemas/decisionlog.v0.2.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["version", "ops"],
+  "properties": {
+    "version": { "const": "0.2" },
+    "ops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

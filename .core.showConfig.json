@@ -1,0 +1,69 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "lib": [
+            "es2022"
+        ],
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "skipLibCheck": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "verbatimModuleSyntax": false,
+        "types": [
+            "node"
+        ],
+        "baseUrl": "../..",
+        "paths": {
+            "@decisiongraph/core": [
+                "packages/core/src/index.ts"
+            ],
+            "@decisiongraph/schema": [
+                "packages/schema/src/index.ts"
+            ]
+        },
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "composite": true,
+        "emitDeclarationOnly": false,
+        "resolvePackageJsonExports": true,
+        "resolvePackageJsonImports": true,
+        "incremental": true,
+        "useDefineForClassFields": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "strictBuiltinIteratorReturn": true,
+        "alwaysStrict": true,
+        "useUnknownInCatchVariables": true
+    },
+    "files": [
+        "./src/index.ts",
+        "./src/domain/ids.ts",
+        "./src/domain/time.ts",
+        "./src/domain/types.ts",
+        "./src/kernel/apply.ts",
+        "./src/kernel/diff.ts",
+        "./src/kernel/errors.ts",
+        "./src/kernel/index.ts",
+        "./src/kernel/lint.ts",
+        "./src/kernel/replay.ts",
+        "./src/policy/constitutional.ts",
+        "./src/policy/index.ts",
+        "./src/policy/policy.ts"
+    ],
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "F:/OSS_project/decisiongraph-core/packages/core/dist"
+    ]
+}

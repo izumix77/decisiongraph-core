@@ -1,0 +1,17 @@
+{
+  "version": "0.2",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:adr-001",
+        "kind": "ADR",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:izzy",
+        "payload": { "title": "Example ADR" }
+      }
+    },
+    { "type": "commit", "commitId": "C:1", "createdAt": "2026-02-06T00:00:01.000Z", "author": "A:izzy" }
+  ]
+}
