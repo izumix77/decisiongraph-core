@@ -14,3 +14,18 @@ DecisionGraph Core is a deterministic kernel for recording, traversing, and repl
 - @decisiongraph/io-json: JSON <-> core mapping + normalization
 - @decisiongraph/cli: CLI wrapper
 
+
+
+
+
+## Type checking
+
+- Dev-time type check (no emit, includes tests):
+  ```bash
+  pnpm -r exec tsc -p tsconfig.json
+  ```
+
+- Full project graph validation (CI / build):
+  ```bash
+  pnpm exec tsc -b
+  ```
