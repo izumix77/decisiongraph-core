@@ -3,9 +3,13 @@
 **BREAKING CHANGES from v0.1a**
 
 - Strengthened edge immutability requirements
+
 - Clarified commit boundary enforcement
+
 - Unified state model
+
 - Removed implementation ambiguities
+
 
 ---
 
@@ -28,11 +32,11 @@ Sections marked **Non-Normative** provide rationale or guidance and do not impos
 
 - Provide deterministic:
 
-    - **search** (filtering by structured fields / concept tags)
+    - **search** (filtering by structured fields / tags)
 
     - **traverse** (bounded path traversal over edges)
 
-    - **replay** (reconstruct decision state `as-of` a time)
+    - **replay** (reconstruct graph state _as-of_ a boundary)
 
 
 ### Core DOES NOT
@@ -50,57 +54,56 @@ Sections marked **Non-Normative** provide rationale or guidance and do not impos
 
 ## 2) Data Model (Minimal) — **Normative**
 
-### 2.1 Decision Node (Minimal)
+The canonical graph state consists of **Nodes**, **Edges**, and **Commits**.
 
-A Decision Node represents a single, committed human judgment.
+### 2.1 Node (Minimal)
 
-```
-id (string): unique decision identifier (MUST be stable)
-status (string): active | superseded | deprecated
+A Node **MUST** include:
 
-metadata (object) MUST contain:
-  author (string): REQUIRED, non-null, non-empty
-  created_at (string, RFC3339 timestamp): time of initial creation
-  committed_at (string, RFC3339 timestamp): time of structural immutability
+- `id`: stable identifier
 
-statement (string): human-readable declaration (view-layer only)
-context (object): domain / tags / scope (implementation-defined)
-edges (array): relationship edges (graph-layer)
-```
+- `kind`: implementation-defined string discriminator
 
-#### Breaking Change from v0.1a
+- `status`: one of `Active | Superseded | Deprecated`
 
-- `metadata.author` is now explicitly REQUIRED (not just MUST be non-empty if present)
-- Empty or missing `metadata.author` MUST result in validation ERROR
+- `createdAt`: RFC3339 / ISO-8601 timestamp
 
-#### Non-Normative Rationale
+- `author`: REQUIRED, non-empty identifier
 
-Separating `created_at` and `committed_at` allows draft or provisional states while preserving the moment at which responsibility becomes binding. Replay and audit rely on `committed_at` as the temporal anchor.
+- `payload`: opaque to the kernel
 
----
 
-### 2.2 Relationship Edge (Minimal)
+### 2.2 Edge (Minimal)
 
-A Relationship Edge represents a typed, directed structural relationship between decisions.
+An Edge **MUST** include:
 
-```
-id (string): REQUIRED, stable edge identifier
-type (string): relationship type
-  Examples: depends_on | overrides | conflicts_with | supports | refutes | supersedes
-target (string): referenced decision id
-status (string): active | superseded (added in v0.2)
+- `id`: stable identifier
 
-metadata (object, optional):
-  reason (string, optional)
-  scope (string, optional)
-  superseded_by (string, optional): edge id that replaces this edge
-  extra (object, optional)
-```
+- `type`: one of `depends_on | supports | refutes | overrides | supersedes`
 
-#### Breaking Changes from v0.1a
+- `from`: source Node identifier
 
-- `edges[].id` is now REQUIRED (not optional)
-- `edges[].status` field added to support immutability model
+- `to`: target Node identifier
+
+- `status`: one of `Active | Superseded | Deprecated`
+
+- `createdAt`: RFC3339 / ISO-8601 timestamp
+
+- `author`: REQUIRED, non-empty identifier
+
+- `payload`: opaque to the kernel
+
+
+### 2.3 Commit (Minimal)
+
+A Commit **MUST** include:
+
+- `commitId`: stable identifier
+
+- `createdAt`: RFC3339 / ISO-8601 timestamp
+
+- `author`: REQUIRED, non-empty identifier
+
 
 ---
 
@@ -116,7 +119,8 @@ Given the same graph state and the same structured query, the Core **MUST** retu
 
 
 Ordering **MUST** be derived solely from stable, explicit fields
-(e.g. `id`, `metadata.committed_at`), and **MUST NOT** depend on insertion order, runtime state, or implementation-specific behavior.
+(e.g. `id`, commit order, or `commitId`)
+and **MUST NOT** depend on insertion order, runtime state, or implementation-specific behavior.
 
 ---
 
@@ -128,20 +132,25 @@ The Core **MUST NOT**:
 
 - Guess missing relationships
 
-- Infer semantic meaning beyond explicit fields
+- Infer semantic meaning beyond explicit structure
 
 
-All structure must be explicitly provided.
+All structure **MUST** be explicitly provided.
 
 ---
 
 ### 3.3 Replay is First-Class
 
-The Core **MUST** support time-based evaluation (`--as-of`) using explicit timestamp fields on nodes.
+The Core **MUST** support reconstructing graph state **as-of a point in history**.
 
-Replay results **MUST** reflect the graph state as it existed at or before the specified time.
+An _as-of_ boundary **MUST** be expressible by at least one of:
 
-Replay **MUST** account for both **node and edge existence** as of the specified time.
+- a commit marker (e.g. `commitId`), or
+
+- a timestamp (if supported by the implementation)
+
+
+Replay results **MUST** reflect the graph state at or before the specified boundary.
 
 ---
 
@@ -149,119 +158,94 @@ Replay **MUST** account for both **node and edge existence** as of the specified
 
 ### 4.1 Actor Identity
 
-- Every Decision Node **MUST** declare a **REQUIRED**, non-null, non-empty `metadata.author`
+- Every Node and Edge **MUST** declare a REQUIRED, non-null, non-empty `author`
 
-- Missing or empty `metadata.author` **MUST** be treated as **ERROR** (not WARN)
+- Missing or empty `author` **MUST** be treated as **ERROR**
 
-- The Core **MUST** preserve `metadata.author` identity across traversal and replay
+- The Core **MUST** preserve `author` identity across traversal and replay
 
-- The Core **does not interpret or validate the semantics** of `metadata.author`
+- The Core **does not interpret or validate the semantics** of `author`
 
 
 ---
 
-### 4.2 Commit Immutability — **Breaking Change**
+### 4.2 Commit Immutability — **Normative**
 
-After a Decision Node is committed (i.e., `metadata.committed_at` is set), the Core **MUST NOT** allow modification of:
+A graph is considered **committed** once it contains at least one Commit record.
 
-- `metadata.author`
+After the first commit, the Core **MUST NOT** allow any operation that mutates
+the structural contents of the graph, including:
 
-- `metadata.committed_at`
+- Adding, removing, or modifying Nodes
 
-- `id`
+- Adding, removing, or modifying Edges
 
-- Any existing edge (edges can only be superseded, not modified or deleted)
+- Changing any Node or Edge identifiers
+
+- Changing authorship or creation timestamps of Nodes or Edges
 
 
-#### Edge Immutability After Commit
+#### Relationship Changes After Commit
 
-Once committed, edges **MUST** follow these rules:
+After commit, relationship changes **MUST** be expressed only via supersession:
 
-1. **No Deletion**: Committed edges **MUST NOT** be deleted
+1. The existing Edge **MUST** transition to `Superseded`
 
-2. **No Modification**: Existing edge properties (type, target, metadata) **MUST NOT** be changed
+2. A new Edge with a new identifier **MUST** be added
 
-3. **Supersession Only**: To change a relationship:
+3. The supersession **MUST** be represented by operation semantics
+    (e.g. a `supersede_edge` operation)
 
-    - Add a new edge with a new `id`
-    - Mark the old edge's `status` as `superseded`
-    - Set `superseded_by` in the old edge's metadata to reference the new edge id
-4. **Append-Only**: New edges **MAY** be added to committed nodes
+
+Direct deletion or in-place modification of committed Edges is **FORBIDDEN**.
+
+#### Additional Commits
+
+After the first commit, additional Commit records **MAY** be appended.
+
+Such additional commits:
+
+- **MUST NOT** change existing Node or Edge contents
+
+- **MUST NOT** alter replay results
+
+- **MAY** be used for re-anchoring, re-signing, or external attestation
 
 
 #### Enforcement
 
-Implementations **MUST** enforce immutability via:
+Implementations **MUST** enforce commit immutability through a **non-optional constitutional enforcement mechanism**.
 
-- Input validation that rejects modification operations on committed nodes/edges
+This mechanism:
 
-- Content hashing (optional but recommended)
+- **MUST** be enabled by default
 
-- Append-only storage architecture
+- **MUST NOT** be removable or bypassable in conformant builds
+
+- **MAY** be implemented as a built-in policy module or equivalent internal mechanism
 
 
-Implementations **MUST NOT** delegate this enforcement solely to Policy layers.
-Immutability is a **constitutional requirement**, not a policy preference.
-
-#### Non-Normative Rationale
-
-Decisions without authorship are non-accountable. Replay without actor identity is non-auditable. Mutating authorship or commit time breaks temporal responsibility.
-
-Allowing edge deletion or modification after commit would break:
-
-- Audit trails
-- Replay determinism
-- Responsibility chains
+Commit immutability is a **constitutional requirement**, not an optional policy preference.
 
 ---
 
-## 5) Edge Identity — **Normative** (upgraded from optional)
+## 5) Edge Identity — **Normative**
 
 ### 5.1 Edge ID Requirement
 
-All edges **MUST** include a stable identifier:
+- All Edges **MUST** include a stable `id`
 
-```json
-"edges": [
-  {
-    "id": "edge-001",
-    "type": "depends_on",
-    "target": "SEC-POLICY-2025-004",
-    "status": "active",
-    "metadata": {
-      "reason": "MFA is mandatory"
-    }
-  }
-]
-```
-
-#### Breaking Change from v0.1a
-
-- Edge IDs are now REQUIRED, not optional
-- Edge status field is REQUIRED
-
----
-
-### 5.2 Edge ID Rules — **Normative**
-
-- `edges[].id` **MUST** be unique within a Decision Node
-
-- `edges[].id` **MUST** be unique across the entire graph (recommended but not required)
-
-- `edges[].id` **MUST NOT** change after commit
-
-- `edges[].status` **MUST** be either `active` or `superseded`
+- Edge identifiers **MUST NOT** change after commit
 
 
-Changes to relationships **MUST** be represented by:
+### 5.2 Edge Status Rules
 
-1. Creating a new edge with a new `id` and `status: active`
-2. Setting the old edge's `status` to `superseded`
-3. Setting the old edge's `metadata.superseded_by` to the new edge's `id`
+- `status` **MUST** be one of `Active | Superseded | Deprecated`
 
-#### Non-Normative Rationale
+- Relationship changes **MUST** be represented by supersession, not deletion
 
-Stable edge identifiers enable precise diffs, signing, attestation, and long-term audit trails without ambiguity.
+
+Stable Edge identifiers enable precise diffs, signing, attestation, and long-term audit trails.
 
 ---
 
@@ -275,23 +259,17 @@ Graph integrity or determinism is broken. The system **MUST** fail.
 
 Examples:
 
-- Missing or empty `metadata.author` (**upgraded from WARN in v0.1a**)
+- Missing or empty `author`
 
-- Missing or invalid `metadata.created_at`
+- Missing or invalid `createdAt`
 
-- Missing or invalid `metadata.committed_at`
-
-- Missing `edges[].id`
-
-- Missing target decision ID
+- Missing Node or Edge identifiers
 
 - Circular dependency
 
-- Dependency on a superseded decision (where superseded means `status: superseded`)
+- Dependency on a `Superseded` decision
 
-- Attempt to modify or delete committed edge
-
-- Hard expiration violation (if supported by extensions)
+- Attempt to modify committed Nodes or Edges
 
 
 ---
@@ -302,13 +280,9 @@ Structurally valid but stale or risky.
 
 Examples:
 
-- Review date exceeded
+- Long-term unchanged decisions
 
-- External reference drift
-
-- Long-term unchanged core decisions
-
-- Dependency on deprecated (but not superseded) decision
+- Dependency on `Deprecated` decisions
 
 
 ---
@@ -321,9 +295,7 @@ Examples:
 
 - Orphan nodes
 
-- Tag drift
-
-- Potential semantic duplication
+- Potential structural duplication
 
 
 Implementations **MAY** offer a `--strict` mode to treat selected WARN conditions as ERROR.
@@ -334,46 +306,49 @@ Implementations **MAY** offer a `--strict` mode to treat selected WARN condition
 
 ### 7.1 Node Status
 
-Valid values for `status`:
+- `Active`: Decision is currently valid
 
-- `active`: Decision is currently valid and in effect
-- `superseded`: Decision has been replaced by another decision
-- `deprecated`: Decision is marked for future removal but still referenced
+- `Superseded`: Decision has been replaced
+
+- `Deprecated`: Decision remains referenced but should not be extended
+
 
 ### 7.2 Edge Status
 
-Valid values for `edges[].status`:
+- `Active`: Relationship is currently valid
 
-- `active`: Edge relationship is currently valid
-- `superseded`: Edge has been replaced by another edge
+- `Superseded`: Relationship has been replaced
+
+- `Deprecated`: Relationship is retained for reference only
+
 
 ### 7.3 Status Transitions — **Normative**
 
 Allowed transitions:
 
 ```
-Node: active → superseded
-Node: active → deprecated
-Node: deprecated → superseded
+Node: Active → Superseded
+Node: Active → Deprecated
+Node: Deprecated → Superseded
 
-Edge: active → superseded (ONLY, no deletion)
+Edge: Active → Superseded
+Edge: Active → Deprecated
 ```
 
-**Forbidden operations:**
+**Forbidden:**
 
-- Reverting from `superseded` to `active`
-- Deleting edges (must supersede instead)
-- Modifying committed edges directly
+- Reverting from `Superseded` to `Active`
+
+- Deleting committed Edges
+
+- Modifying committed Nodes or Edges directly
+
 
 ---
 
 ## 8) Interface Boundary — **Normative**
 
-- LLM or probabilistic systems **MAY**:
-
-    - Transform natural language into structured fields (e.g., concept tags)
-
-    - Propose edges or validation suggestions
+- Probabilistic or generative systems **MAY** propose structured operations
 
 - The Core **MUST**:
 
@@ -382,23 +357,21 @@ Edge: active → superseded (ONLY, no deletion)
     - Remain fully deterministic
 
 
-Any probabilistic or generative component **MUST** exist outside the Core.
+Any probabilistic component **MUST** exist outside the Core.
 
 ---
 
 ## 9) Conformance
 
-An implementation is considered **Conformant** with this Constitution if and only if it:
+An implementation is **Conformant** if and only if it:
 
 - Enforces all **MUST** requirements in Sections 2–8
 
-- Produces deterministic results for identical graph state and queries
+- Produces deterministic results for identical inputs
 
 - Preserves actor identity and commit immutability across replay
 
 - Rejects operations that violate edge immutability
-
-- Validates required fields (`author`, `edges[].id`) at input time
 
 
 ---
@@ -407,20 +380,16 @@ An implementation is considered **Conformant** with this Constitution if and onl
 
 ### Breaking Changes Summary
 
-1. **Edge IDs are required**: Add unique `id` to all edges
-2. **Edge status is required**: Add `status: active` to all edges
-3. **Author is required**: Ensure all nodes have `metadata.author`
-4. **No edge deletion**: Replace `remove_edge` operations with supersession
-5. **Status values standardized**: Use only `active`, `superseded`, `deprecated`
+1. Edge IDs are REQUIRED
 
-### Migration Steps
+2. Edge status is REQUIRED
 
-For existing graphs:
+3. Author is REQUIRED on Nodes and Edges
 
-1. Generate stable IDs for all edges lacking them
-2. Add `status: active` to all existing edges
-3. Validate that all nodes have `metadata.author`
-4. Convert any edge deletions in history to supersessions
+4. Edge deletion is forbidden; use supersession
+
+5. Status vocabulary standardized
+
 
 ---
 
@@ -428,7 +397,7 @@ For existing graphs:
 
 This Constitution intentionally remains minimal.
 
-Domain-specific semantics (law, ADR, research, narrative systems, cognitive tracing, financial compliance) belong to **extension packages**, not to the Core.
+Domain-specific semantics belong to **extension packages**, not to the Core.
 
 The Core defines **structure, responsibility, and replayability — not meaning.**
 
@@ -446,4 +415,4 @@ This Constitution is the **supreme authority** for DecisionGraph Core.
 
 In case of conflict between this document and any implementation, API specification, or schema definition, **this Constitution takes precedence**.
 
-All compliant implementations, APIs, and schemas MUST cite this Constitution as their normative reference.
+All compliant implementations **MUST** cite this Constitution as their normative reference.
