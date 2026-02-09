@@ -90,11 +90,13 @@ These are enforced at the kernel level, not by convention.
 Each decision is a node.
 Each relationship is an explicit, typed edge.
 
+
 ```text
 Decision A
- └─ depends_on → Decision B
-      └─ superseded_by → Decision C
+ └─ depends_on → Decision B
+      └─ superseded_by → Decision C
 ```
+
 There is no hidden meaning and no implicit inference.
 **The structure is the data.**
 
@@ -114,7 +116,6 @@ This allows:
 - deterministic behavior
 
 - stable replay across time and systems
-
 
 ---
 
@@ -139,27 +140,41 @@ It is not intended for end-user productivity tools or consumer-facing AI feature
 
 ## Project structure
 
-Key documents:
-
-- **README.md** — this file (overview)
-
-- **Constitution v0.2** — normative requirements (supreme authority)
-
-- **JSON Schema v0.2** — data validation rules
-
-- **Minimal Kernel API v0.2** — implementation specification
+### Repository layout (source of truth)
 
 
-**Recommended reading order:**
+This repository is a monorepo.
+
+```text
+docs/
+  constitution/v0.2/   # Normative specification (supreme authority)
+packages/
+  core/                # Deterministic kernel (domain model, replay, diff)
+  schema/              # JSON Schema validators (structural only)
+  io-json/             # JSON ↔ core mapping and normalization
+  cli/                 # CLI wrapper (non-normative interface)
+```
+
+The normative source of truth is docs/constitution/v0.2.
+If there is any conflict between documentation and implementation,
+the Constitution MUST take precedence.
+
+### Key documents
+
+- README.md — this file (overview)
+
+- Constitution v0.2 — normative requirements (supreme authority)
+
+- JSON Schema v0.2 — data validation rules
+
+- Minimal Kernel API v0.2 — implementation specification
+
+#### Recommended reading order:
 
 1. README
-
 2. Constitution
-
 3. JSON Schema
-
 4. Kernel API
-
 
 ---
 
@@ -207,7 +222,6 @@ The kernel remains neutral and reusable across domains.
 - **Stability:** Active development
 
 - **Normative authority:** Constitution v0.2
-
 
 ---
 

@@ -161,27 +161,36 @@ DecisionGraph Core は、
 
 ## ドキュメント構成
 
+### リポジトリ構成（正本の所在）
+
+本リポジトリは **monorepo** 構成です。
+
+```text
+docs/
+  constitution/v0.2/   # 規範仕様（最上位の正本）
+packages/
+  core/                # 決定論的カーネル（ドメインモデル・再生・差分）
+  schema/              # JSON Schema（構造検証のみ）
+  io-json/             # JSON ↔ core の変換・正規化
+  cli/                 # CLI ラッパー（非規範）
+```
+規範上の正本（source of truth）は docs/constitution/v0.2 です。
+ドキュメントと実装の間に矛盾がある場合、
+Constitution が常に最優先されます。
+
 主要ドキュメント：
 
 - **README.md** — 概要（英語正本）
-
 - **Constitution v0.2** — 規範要件（最上位）
-
 - **JSON Schema v0.2** — データ検証仕様
-
 - **Minimal Kernel API v0.2** — 実装仕様
-
 
 **推奨読書順：**
 
 1. README
-
 2. Constitution
-
 3. JSON Schema
-
 4. Kernel API
-
 
 ---
 
