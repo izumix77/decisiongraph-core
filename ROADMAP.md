@@ -53,31 +53,48 @@ This phase establishes the **“load-bearing skeleton”** of the project.
 
 ---
 
-## Phase 2 — Core Maturity & Invariants (Next)
+## Phase 2 — Core Maturity & Invariants
 
-**Status:** 🟡 Planned / In Progress
+**Status:** 🟡 Planned / _Partially in Progress_
 
-Focus: strengthen *semantic correctness* without increasing surface area.
+Focus: strengthen **semantic correctness** without increasing surface area.
+
+This phase consolidates and formalizes invariants that have already been
+introduced at the specification level, and ensures they are fully enforced
+and testable at the kernel boundary.
 
 ### Goals
-- Explicitly define and document **core invariants**
-- Expand kernel-level validation where appropriate
-- Improve internal consistency guarantees
+
+- Explicitly define and formalize **core invariants**
+- Strengthen kernel-level validation (without expanding API surface)
+- Clarify and harden internal consistency guarantees
+
+### Already Established (Ahead of Schedule)
+
+- Core invariants documented in **Constitution v0.2**
+- Normative alignment between:
+    - Constitution
+    - JSON Schema
+    - Minimal Kernel API
+    - Core domain types
+- Commit immutability and append-only semantics fixed
+- Determinism and replay guarantees explicitly specified
 
 ### Candidate Work
-- Clarify invariants for:
-  - Graph structure
-  - Node / Edge identity
-  - Temporal consistency
-- Improve error typing and classification
-- Tighten lint / diff / replay contracts
-- Add minimal, high-signal tests for invariants
 
-Non-goals:
-- No performance optimizations yet
+- Formalize invariants for
+    - Graph structure
+    - Node / Edge identity
+    - Temporal consistency
+- Refine error typing and classification
+- Tighten `lint`, `diff`, and `replay` contracts
+- Add minimal, high-signal tests for invariant enforcement
+
+### Non-goals
+
+- No performance optimizations
 - No new storage backends
 - No convenience APIs that weaken guarantees
-
 ---
 
 ## Phase 3 — Policy & Extension Boundaries (Future)
