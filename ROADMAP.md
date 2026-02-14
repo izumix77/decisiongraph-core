@@ -95,6 +95,44 @@ and testable at the kernel boundary.
 - No performance optimizations
 - No new storage backends
 - No convenience APIs that weaken guarantees
+
+### Phase 2 Exit Criteria (Definition of Done)
+
+Phase 2 is **not** about “finishing” the Core.
+Phase 2 is complete when the Core is stable enough to be treated as a
+**deterministic decision kernel**, so that higher layers (ClaimAtom, TraceOS, etc.)
+can start building on top of it.
+
+Phase 2 is considered DONE only when all of the following are true:
+
+#### A) The minimal end-to-end scenario works
+- A minimal Graph (Nodes / Edges) can be constructed
+- Operations can be applied (`apply`)
+- A commit can be created
+- `replay(asOf)` reconstructs the state at commit time
+
+#### B) Invariants are enforced in a non-bypassable way
+- Graph immutability after commit is enforced at the Core entrypoint
+- Callers cannot bypass immutability by supplying a permissive/custom policy
+- The append-only contract cannot be broken at the Core level
+
+#### C) Failures are deterministically classified
+- Invariant violations are always treated as `ERROR`
+- Errors have at least a minimal stable code vocabulary
+  (e.g. `IMMUTABLE_AFTER_COMMIT`)
+- Error outputs are reproducible and do not vary across environments
+
+#### D) Golden tests (fixed fixtures) exist
+- At least 10 JSON fixtures exist for the minimal scenario
+- Fixtures cover the full loop: `apply → commit → replay`
+- Fixtures are executed in CI
+
+---
+
+Once these criteria are met, DecisionGraph Core is considered to have reached:
+
+**“Groundwork complete: safe to start building the superstructure (ClaimAtom MVP).”**
+
 ---
 
 ## Phase 3 — Policy & Extension Boundaries (Future)

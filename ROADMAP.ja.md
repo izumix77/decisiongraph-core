@@ -85,6 +85,40 @@
 - 新しいストレージ実装は追加しない
 - 保証を弱める便利 API は導入しない
 
+### Phase 2 Exit Criteria（完了条件）
+
+Phase 2 は「Core を完成させる」フェーズではない。
+このフェーズの完了は、**Core が最小限の判断カーネルとして成立し、上位レイヤー（ClaimAtom 等）が着工可能になること**を意味する。
+
+以下をすべて満たした時点で Phase 2 を完了とする：
+
+#### A) 1周する最小シナリオが成立している
+- 最小 Graph（Node / Edge）を作成できる
+- Operation を apply できる
+- commit を作成できる
+- `replay(asOf)` により commit 時点の状態を復元できる
+
+#### B) 不変条件（Invariants）が「バイパス不能」に強制されている
+- commit 後の Graph が immutable であることが、Core の入口で必ず強制される
+- 呼び出し側が任意 policy を渡すことで immutability を回避できない
+- append-only の仕様が Core レベルで破れない
+
+#### C) 失敗が deterministic に分類される
+- 不変条件違反は必ず `ERROR` として扱われる
+- エラーは最低限の分類コード（例：IMMUTABLE_AFTER_COMMIT 等）を持つ
+- エラー出力は再現可能であり、環境差で変化しない
+
+#### D) Golden Test（固定フィクスチャ）が存在する
+- 最小シナリオを検証する JSON fixture が 10 本以上存在する
+- fixture は `apply → commit → replay` の往復を含む
+- fixture は CI で実行される
+
+---
+
+この Exit Criteria を満たした時点で、DecisionGraph Core は
+**「地盤工事が完了し、上物（ClaimAtom MVP）が着工できる状態」**
+に到達したと見なす。
+
 ---
 
 ## Phase 3 — Policy と拡張境界の確立（将来）
