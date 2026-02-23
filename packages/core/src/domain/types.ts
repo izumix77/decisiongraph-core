@@ -5,6 +5,8 @@ export type NodeStatus = "Active" | "Superseded" | "Deprecated";
 export type EdgeStatus = "Active" | "Superseded" | "Deprecated";
 export type EdgeType = "depends_on" | "supports" | "refutes" | "overrides" | "supersedes";
 
+export type ViolationSeverity = "ERROR" | "WARN" | "INFO";
+
 export type Node = {
   id: NodeId;
   kind: string;
@@ -47,5 +49,6 @@ export type Operation = AddNodeOp | AddEdgeOp | SupersedeEdgeOp | CommitOp;
 export type Violation = {
   code: string;
   message: string;
+  severity: ViolationSeverity;
   path?: string;
 };
