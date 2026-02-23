@@ -228,3 +228,9 @@ The kernel remains neutral and reusable across domains.
 ## License
 
 MIT License
+
+---
+
+## Architectural Integrity
+
+See [INTEGRITY_PLAYBOOK.md](./INTEGRITY_PLAYBOOK.md)

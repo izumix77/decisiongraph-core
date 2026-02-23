@@ -250,3 +250,9 @@ v0.2 では、不変性の強化、
 ## ライセンス
 
 MIT License
+
+---
+
+## Architectural Integrity
+
+See [INTEGRITY_PLAYBOOK.md](./INTEGRITY_PLAYBOOK.md)
