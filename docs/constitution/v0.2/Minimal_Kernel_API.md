@@ -128,8 +128,10 @@ type Policy = {
 - author required on `add_node`, `add_edge`, `supersede_edge`, `commit`
 
 - after the first `commit`, mutation ops are rejected
-
-- `supersede_edge` requires `oldEdgeId` to exist
+- only a single `commit` is allowed; subsequent `commit` ops are rejected
+- `node.id` / `edge.id` uniqueness is enforced for `add_node`, `add_edge`, `supersede_edge`
+- `node.status`, `edge.status`, and `edge.type` vocabularies are enforced at runtime
+- `supersede_edge` requires the old edge to exist and be `Active`, and the new edge to be `Active`
 
 - `commitId` must be unique
 
@@ -157,7 +159,8 @@ function apply(graph: Graph, op: Operation, policy: Policy): ApplyResult;
 function applyBatch(graph: Graph, ops: Operation[], policy: Policy): ApplyResult;
 ```
 
-- If policy returns violations, the op is rejected and the graph is unchanged.
+- `apply` and `applyBatch` always enforce the Constitution first; caller policies can only add stricter rules.
+- If any policy returns violations, the op is rejected and the graph is unchanged.
 
 - Unknown op types are rejected.
 

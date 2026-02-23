@@ -1,5 +1,6 @@
 import type { Graph, Operation } from "../domain/types.js";
 import type { Policy } from "../policy/policy.js";
+import { ConstitutionalPolicy } from "../policy/constitutional.js";
 import { policyError, type KernelError } from "./errors.js";
 
 export type ApplyEvent =
@@ -11,6 +12,15 @@ export type ApplyResult = { graph: Graph; events: ApplyEvent[] };
 export const emptyGraph = (): Graph => ({ nodes: {}, edges: {}, commits: [] });
 
 export function apply(graph: Graph, op: Operation, policy: Policy): ApplyResult {
+  // Non-bypassable constitutional enforcement (runs regardless of caller policy)
+  const constitutional = new ConstitutionalPolicy().validateOperation(graph, op);
+  if (constitutional.length > 0) {
+    return {
+      graph,
+      events: [{ type: "rejected", opType: op.type, error: policyError(constitutional) }]
+    };
+  }
+
   const violations = policy.validateOperation(graph, op);
   if (violations.length > 0) {
     return {
