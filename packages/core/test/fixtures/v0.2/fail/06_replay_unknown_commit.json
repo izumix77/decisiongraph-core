@@ -1,0 +1,27 @@
+{
+  "name": "06_replay_unknown_commit",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:1",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-02-06T00:00:01.000Z",
+      "author": "A:system"
+    }
+  ],
+  "expect": {
+    "replay": [
+      { "asOfCommitId": "C:missing" }
+    ],
+    "replayError": { "code": "REPLAY_COMMIT_NOT_FOUND", "severity": "ERROR", "path": "expect.replay[0].asOfCommitId" }
+  }
+}

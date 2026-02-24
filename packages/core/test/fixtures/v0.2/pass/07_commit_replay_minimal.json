@@ -1,0 +1,58 @@
+{
+  "name": "07_commit_replay_minimal",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:1",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-02-06T00:00:01.000Z",
+      "author": "A:system"
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        {
+          "id": "N:1",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:00.000Z",
+          "author": "A:system"
+        }
+      ],
+      "edges": [],
+      "commits": [
+        {
+          "commitId": "C:1",
+          "createdAt": "2026-02-06T00:00:01.000Z",
+          "author": "A:system"
+        }
+      ]
+    },
+    "replay": [
+      {
+        "asOfCommitId": "C:1",
+        "snapshot": {
+          "nodes": [
+            { "id": "N:1", "kind": "Decision", "status": "Active" }
+          ],
+          "edges": [],
+          "commits": [
+            { "commitId": "C:1" }
+          ]
+        }
+      }
+    ]
+  }
+}
