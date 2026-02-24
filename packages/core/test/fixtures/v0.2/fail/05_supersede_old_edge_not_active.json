@@ -1,0 +1,56 @@
+{
+  "name": "05_supersede_old_edge_not_active",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:1",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:2",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:01.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:1",
+        "type": "supports",
+        "from": "N:1",
+        "to": "N:2",
+        "status": "Superseded",
+        "createdAt": "2026-02-06T00:00:02.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "supersede_edge",
+      "oldEdgeId": "E:1",
+      "newEdge": {
+        "id": "E:2",
+        "type": "supports",
+        "from": "N:1",
+        "to": "N:2",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:03.000Z",
+        "author": "A:system"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 3 },
+    "violations": [
+      { "code": "EDGE_NOT_ACTIVE", "severity": "ERROR", "path": "op.oldEdgeId" }
+    ]
+  }
+}

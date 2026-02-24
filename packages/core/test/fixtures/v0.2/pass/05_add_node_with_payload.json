@@ -1,0 +1,40 @@
+{
+  "name": "05_add_node_with_payload",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:payload",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:system",
+        "payload": {
+          "source": "unit",
+          "confidence": 0.5
+        }
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        {
+          "id": "N:payload",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:00.000Z",
+          "author": "A:system",
+          "payload": {
+            "source": "unit",
+            "confidence": 0.5
+          }
+        }
+      ],
+      "edges": [],
+      "commits": []
+    }
+  }
+}

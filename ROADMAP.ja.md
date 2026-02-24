@@ -141,11 +141,15 @@ Phase 2 は「完成」ではなく、
 
 #### B) 不変条件がバイパス不能
 
-- commit 後 mutation 不可
+- `apply` / `applyBatch` は常に Constitution を先に適用
 
-- policy による回避不可
+- 最初の commit 以後は不変（kernel 入口で強制）
 
-- append-only 破壊不可
+- single-commit 制約が強制される
+
+- runtime vocabulary enforcement（NodeStatus / EdgeStatus / EdgeType）
+
+- ID 一意性が強制される（node.id / edge.id）
 
 
 **ステータス:** ✅ 完了
@@ -155,11 +159,13 @@ Phase 2 は「完成」ではなく、
 
 #### C) 失敗が deterministic に分類される
 
-- 不変条件違反は必ず ERROR
+- 不変条件違反は常に severity=ERROR
 
-- violation code が安定
+- violation code が安定し、順序も決定論的
 
-- 出力が環境差で変化しない
+- 出力の正規化が環境差に依存しない
+
+- Golden fixture により失敗出力の回帰を防止
 
 
 **ステータス:** ✅ 完了

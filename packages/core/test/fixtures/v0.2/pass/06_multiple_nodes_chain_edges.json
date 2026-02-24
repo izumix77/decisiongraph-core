@@ -1,0 +1,147 @@
+{
+  "name": "06_multiple_nodes_chain_edges",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:1",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:2",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:01.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:3",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:02.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:4",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:03.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:1",
+        "type": "supports",
+        "from": "N:1",
+        "to": "N:2",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:04.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:2",
+        "type": "refutes",
+        "from": "N:2",
+        "to": "N:3",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:05.000Z",
+        "author": "A:system"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:3",
+        "type": "overrides",
+        "from": "N:3",
+        "to": "N:4",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:06.000Z",
+        "author": "A:system"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        {
+          "id": "N:1",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:00.000Z",
+          "author": "A:system"
+        },
+        {
+          "id": "N:2",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:01.000Z",
+          "author": "A:system"
+        },
+        {
+          "id": "N:3",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:02.000Z",
+          "author": "A:system"
+        },
+        {
+          "id": "N:4",
+          "kind": "Decision",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:03.000Z",
+          "author": "A:system"
+        }
+      ],
+      "edges": [
+        {
+          "id": "E:1",
+          "type": "supports",
+          "from": "N:1",
+          "to": "N:2",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:04.000Z",
+          "author": "A:system"
+        },
+        {
+          "id": "E:2",
+          "type": "refutes",
+          "from": "N:2",
+          "to": "N:3",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:05.000Z",
+          "author": "A:system"
+        },
+        {
+          "id": "E:3",
+          "type": "overrides",
+          "from": "N:3",
+          "to": "N:4",
+          "status": "Active",
+          "createdAt": "2026-02-06T00:00:06.000Z",
+          "author": "A:system"
+        }
+      ],
+      "commits": []
+    }
+  }
+}

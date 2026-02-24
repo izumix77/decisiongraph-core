@@ -5,7 +5,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
-    "clean": "tsc -b tsconfig.build.json --clean"
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "exports": {
     ".": {

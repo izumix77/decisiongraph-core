@@ -157,11 +157,15 @@ It means **the kernel is safe to build upon.**
 
 ### B) Non-bypassable Invariants
 
-- No mutation after commit
+- `apply` / `applyBatch` enforce Constitution before any caller policy
 
-- Cannot bypass immutability via injected policy
+- Immutability after first commit enforced at kernel entry
 
-- Append-only semantics cannot be broken
+- Single-commit rule enforced
+
+- Runtime vocabulary enforcement (NodeStatus / EdgeStatus / EdgeType)
+
+- ID uniqueness enforced (node.id / edge.id)
 
 
 **Status:** ✅ Complete
@@ -171,11 +175,13 @@ It means **the kernel is safe to build upon.**
 
 ### C) Deterministic Failure Semantics
 
-- Invariant violations classified as `ERROR`
+- Invariant violations are always severity `ERROR`
 
-- Stable violation codes
+- Stable violation codes with deterministic ordering
 
-- Output does not vary across environments
+- Output normalization is deterministic across environments
+
+- Golden fixtures prevent regression in failure output
 
 
 **Status:** ✅ Complete

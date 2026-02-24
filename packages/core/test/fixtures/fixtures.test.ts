@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Graph, Violation } from "../../src/domain/types.js";
 import { emptyGraph, apply } from "../../src/kernel/apply.js";
@@ -32,15 +32,15 @@ type NormalizedGraph = {
   commits: Graph["commits"];
 };
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURES_ROOT = resolve(__dirname, "v0.2");
-const PASS_DIR = resolve(FIXTURES_ROOT, "pass");
-const FAIL_DIR = resolve(FIXTURES_ROOT, "fail");
+const here = fileURLToPath(new URL(".", import.meta.url));
+const FIXTURES_ROOT = join(here, "v0.2");
+const PASS_DIR = join(FIXTURES_ROOT, "pass");
+const FAIL_DIR = join(FIXTURES_ROOT, "fail");
 
 const listJsonFiles = (dir: string): string[] =>
   readdirSync(dir, { withFileTypes: true })
     .filter(d => d.isFile() && d.name.endsWith(".json"))
-    .map(d => resolve(dir, d.name))
+    .map(d => join(dir, d.name))
     .sort((a, b) => a.localeCompare(b));
 
 const readJson = <T,>(file: string): T => {
