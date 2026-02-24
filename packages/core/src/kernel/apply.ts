@@ -11,9 +11,11 @@ export type ApplyResult = { graph: Graph; events: ApplyEvent[] };
 
 export const emptyGraph = (): Graph => ({ nodes: {}, edges: {}, commits: [] });
 
+const constitutionalPolicy = new ConstitutionalPolicy();
+
 export function apply(graph: Graph, op: Operation, policy: Policy): ApplyResult {
   // Non-bypassable constitutional enforcement (runs regardless of caller policy)
-  const constitutional = new ConstitutionalPolicy().validateOperation(graph, op);
+  const constitutional = constitutionalPolicy.validateOperation(graph, op);
   if (constitutional.length > 0) {
     return {
       graph,
