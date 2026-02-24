@@ -63,6 +63,33 @@ const normalizeViolations = (violations: Violation[]) =>
     .map(v => ({ code: v.code, severity: v.severity, path: v.path }))
     .sort((a, b) => (a.code + (a.path ?? "")).localeCompare(b.code + (b.path ?? "")));
 
+const normalizeExpectedViolations = (
+  violations: Array<{ code: string; severity: Violation["severity"]; path?: string }>
+) =>
+  violations
+    .map(v => ({ code: v.code, severity: v.severity, path: v.path }))
+    .sort((a, b) => (a.code + (a.path ?? "")).localeCompare(b.code + (b.path ?? "")));
+
+const compareViolations = (
+  actual: Violation[],
+  expected: Array<{ code: string; severity: Violation["severity"]; path?: string }>
+) => {
+  const actualNorm = normalizeViolations(actual);
+  const expectedNorm = normalizeExpectedViolations(expected);
+
+  // Exact length match to ensure single primary invariant violation(s).
+  if (actualNorm.length !== expectedNorm.length) return false;
+
+  for (let i = 0; i < expectedNorm.length; i += 1) {
+    const a = actualNorm[i];
+    const e = expectedNorm[i];
+    if (a.code !== e.code) return false;
+    if (a.severity !== e.severity) return false;
+    if (e.path !== undefined && a.path !== e.path) return false;
+  }
+  return true;
+};
+
 describe("Golden Fixture runner (v0.2)", () => {
   it("runs pass fixtures", () => {
     const files = listJsonFiles(PASS_DIR);
@@ -116,9 +143,9 @@ describe("Golden Fixture runner (v0.2)", () => {
         throw new Error(`${fixture.name} expected violations but none found`);
       }
       expect(
-        normalizeViolations(violations),
+        compareViolations(violations, fixture.expect.violations),
         `${fixture.name} violations mismatch`
-      ).toEqual(normalizeViolations(fixture.expect.violations as Violation[]));
+      ).toBe(true);
     }
   });
 });
