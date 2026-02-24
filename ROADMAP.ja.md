@@ -1,4 +1,4 @@
-# DecisionGraph Core – ロードマップ（日本語）
+# DecisionGraph Core – ロードマップ（日本語・改訂版）
 
 このドキュメントは **DecisionGraph Core** の開発ロードマップを示します。
 目的は機能追加ではなく、**決定論的な判断カーネルとしての長期的な構造安定性**です。
@@ -10,18 +10,30 @@
 **ステータス:** ✅ 完了
 
 ### 内容
+
 - コア思想の確立
-  - 決定論的であること
-  - 状態を再生（Replay）可能であること
-  - AIによる推論を行わない
-  - 確率・ヒューリスティックを用いない
+
+    - 決定論的であること
+
+    - 状態を再生（Replay）可能であること
+
+    - AIによる推論を行わない
+
+    - 確率・ヒューリスティックを用いない
+
 - 明確な責務分離
-  - Core ≠ Schema ≠ IO ≠ CLI
+
+    - Core ≠ Schema ≠ IO ≠ CLI
+
 - 「Kernel は判断しない。検証し、再生するのみ」という原則
 
+
 ### 成果物
+
 - README.md（Non-goals / パッケージ境界）
+
 - Constitution / 哲学ドキュメント（概念層）
+
 
 ---
 
@@ -32,92 +44,159 @@
 このフェーズでは、プロジェクトを**構造的に信用できる状態**にすることを目的としました。
 
 ### 達成事項
+
 - モノレポ構造の安定化
+
 - TypeScript Project References の完全導入
+
 - dev用型チェックと build用 emit の明確な分離
+
 - `src/` 配下に生成物を置かない構成の確立
+
 - ルート `tsconfig.json` による全体グラフ検証
+
 - CI で `tsc -b` を実行し、構造破壊を防止
-- 開発環境の一致を確認
-  - macOS / Windows
-  - Node.js 20.x
-  - pnpm 9.x
+
+- macOS / Windows 間での環境一致確認
+
+- Node.js 20.x / pnpm 9.x 固定
+
 
 ### このフェーズで保証されたこと
+
 - 再現可能なビルド
+
 - 決定論的な型依存グラフ
-- 暗黙的・偶発的なパッケージ依存の排除
+
+- 暗黙的依存の排除
+
 - ローカルと CI の挙動一致
+
 
 このフェーズは、プロジェクトの
 **「荷重を支える骨格（load-bearing skeleton）」** を確立しました。
 
 ---
 
-## Phase 2 — Core の成熟と不変条件（次フェーズ）
+## Phase 2 — Core の成熟と不変条件（進行中）
 
-**ステータス:** 🟡 計画中 / 部分的に着手済み
+**ステータス:** 🟡 進行中（非バイパス不変条件は達成済み）
 
 目的は、**表面積を増やさずに意味的正しさを強化すること**です。
 
-### 目標
-- Core が前提とする **不変条件（Invariants）** の明文化
-- カーネルレベルの検証強化（必要最小限）
-- 内部整合性保証の明確化
+---
 
-### すでに達成されている事項（前倒し）
-- 不変条件の文章化（Constitution v0.2）
-- Core / Schema / API 間の規範的整合性確立
-- 「実装より仕様が上位」という憲法秩序の確定
-- Commit immutability / append-only の仕様固定
+### すでに達成されている事項
 
-### 想定作業
-- 以下に関する不変条件の整理
-  - Graph 構造
-  - Node / Edge の同一性
-  - 時間的整合性
-- エラー型・分類の整理
-- lint / diff / replay の契約明確化
-- 不変条件に対する最小限・高密度なテスト追加
+- Constitution v0.2 の確定
 
-### 明確な非目標
-- パフォーマンス最適化は行わない
-- 新しいストレージ実装は追加しない
-- 保証を弱める便利 API は導入しない
+- 「実装より仕様が上位」という秩序の確立
 
-### Phase 2 Exit Criteria（完了条件）
+- Commit immutability の非バイパス強制（apply / lint 両方）
 
-Phase 2 は「Core を完成させる」フェーズではない。
-このフェーズの完了は、**Core が最小限の判断カーネルとして成立し、上位レイヤー（ClaimAtom 等）が着工可能になること**を意味する。
+- Policy injection による Constitution 回避の排除
 
-以下をすべて満たした時点で Phase 2 を完了とする：
+- append-only 制約の kernel 強制
 
-#### A) 1周する最小シナリオが成立している
-- 最小 Graph（Node / Edge）を作成できる
-- Operation を apply できる
-- commit を作成できる
-- `replay(asOf)` により commit 時点の状態を復元できる
+- runtime vocabulary enforcement
 
-#### B) 不変条件（Invariants）が「バイパス不能」に強制されている
-- commit 後の Graph が immutable であることが、Core の入口で必ず強制される
-- 呼び出し側が任意 policy を渡すことで immutability を回避できない
-- append-only の仕様が Core レベルで破れない
+    - NodeStatus
 
-#### C) 失敗が deterministic に分類される
-- 不変条件違反は必ず `ERROR` として扱われる
-- エラーは最低限の分類コード（例：IMMUTABLE_AFTER_COMMIT 等）を持つ
-- エラー出力は再現可能であり、環境差で変化しない
+    - EdgeStatus
 
-#### D) Golden Test（固定フィクスチャ）が存在する
-- 最小シナリオを検証する JSON fixture が 10 本以上存在する
-- fixture は `apply → commit → replay` の往復を含む
-- fixture は CI で実行される
+    - EdgeType
+
+- Violation に severity 導入
+
+- deterministic error 分類の確立
+
+- 複数 commit の禁止（single-commit 制約）
+
+- ID 重複検知（node / edge / commit）
+
 
 ---
 
-この Exit Criteria を満たした時点で、DecisionGraph Core は
-**「地盤工事が完了し、上物（ClaimAtom MVP）が着工できる状態」**
-に到達したと見なす。
+### Exit Criteria
+
+Phase 2 は「完成」ではなく、
+**上位レイヤーが安心して構築できる地盤完成**を意味します。
+
+---
+
+#### A) 最小シナリオの往復保証
+
+- Node / Edge 作成
+
+- Operation apply
+
+- commit 作成
+
+- replay(asOf) による復元
+
+
+**ステータス:** 🟡 部分達成（Golden fixture 未整備）
+
+---
+
+#### B) 不変条件がバイパス不能
+
+- commit 後 mutation 不可
+
+- policy による回避不可
+
+- append-only 破壊不可
+
+
+**ステータス:** ✅ 完了
+（ConstitutionalPolicy が常に apply / lint で先行実行）
+
+---
+
+#### C) 失敗が deterministic に分類される
+
+- 不変条件違反は必ず ERROR
+
+- violation code が安定
+
+- 出力が環境差で変化しない
+
+
+**ステータス:** ✅ 完了
+
+---
+
+#### D) Golden Test が存在する
+
+- JSON fixture ≥ 10
+
+- apply → commit → replay 往復確認
+
+- CI 実行
+
+
+**ステータス:** 🔲 未着手
+
+---
+
+### 明確な非目標（Phase 2）
+
+- パフォーマンス最適化
+
+- ストレージ実装追加
+
+- 便利 API の導入
+
+- 抽象の緩和
+
+
+---
+
+Phase 2 完了時、DecisionGraph Core は：
+
+> **制度として破壊不能な最小判断カーネル**
+
+になります。
 
 ---
 
@@ -125,65 +204,69 @@ Phase 2 は「Core を完成させる」フェーズではない。
 
 **ステータス:** ⚪ 計画中
 
-目的は、**将来的な複雑性崩壊を未然に防ぐこと**です。
+目的は、**将来的な複雑性崩壊を防ぐこと**です。
 
-### 目標
-- policy ロジックが core を侵食しない構造を保つ
-- 拡張ポイントを明示的かつ安全に定義する
+### 想定内容
 
-### 想定作業
-- policy の分離検討
-  - `@decisiongraph/policies` など
-- 以下の形式化
-  - Policy インターフェース
-  - Policy 互換性ルール
-- 以下間のバージョン関係整理
-  - Core
-  - Schema
-  - IO Adapter
+- policy の外部化検討
 
-このフェーズは、**長期保守性の防波堤**です。
+    - `@decisiongraph/policies`
+
+- Policy 互換性ルール明確化
+
+- Core / Schema / IO のバージョン関係整理
+
+- 拡張ポイントの固定
+
+
+これは、**長期保守性の防波堤**です。
 
 ---
 
-## Phase 4 — エコシステム・周辺ツール（将来 / 任意）
+## Phase 4 — エコシステム・周辺ツール（将来）
 
-**ステータス:** ⚪ 任意・下流フェーズ
+**ステータス:** ⚪ 下流フェーズ
 
-目的は、**Core の外側での使いやすさ向上**です。
+目的は、Core 外側の使いやすさ向上です。
 
-### 想定方向
-- CLI の使い勝手改善（抽象を漏らさない範囲で）
-- 可視化・検査ツール
-- 上位レイヤー（TraceOS / ClaimAtom 等）との統合例
+- CLI 改善（抽象漏洩禁止）
 
-※ すべて **Core の外側** に厳密に配置される必要があります。
+- 可視化ツール
+
+- ClaimAtom / TraceOS 連携例
+
+
+※ すべて Core の外側に置く
 
 ---
 
 ## 恒久的な非目標（Always）
 
-DecisionGraph Core では、以下を一貫して行いません。
+DecisionGraph Core は一貫して以下を行いません：
 
-- AI による推論
-- 確率的・経験則的挙動
+- AI 推論
+
+- 確率的挙動
+
 - ワークフローエンジン
-- 権限・認可システム
-- 組織依存ロジック
-- UI・UX
 
-これらを必要とする機能は、必ず上位レイヤーに属します。
+- 権限管理
+
+- 組織依存ロジック
+
+- UI
+
 
 ---
 
 ## 指導原則
 
-> **DecisionGraph Core はインフラである。**
+> DecisionGraph Core はインフラである。
 > 退屈であることは美徳であり、
 > 予測可能性は必須条件である。
 >
-> すべての機能追加は、
-> 決定論性への影響を正当化できなければならない。
+> すべての変更は、
+> 決定論性を強化するものでなければならない。
 
 ---
 

@@ -1,200 +1,883 @@
-# DecisionGraph Core – Roadmap
+# DecisionGraph Core – Roadmap (Revised)
 
-This document describes the development roadmap of **DecisionGraph Core**.
-The goal is not feature accumulation, but long-term structural stability as a
-deterministic decision kernel.
-
----
-
-## Phase 0 — Concept & Philosophy (Completed)
-
-**Status:** ✅ Completed
-
-- Core philosophy defined:
-  - Deterministic
-  - Replayable
-  - No AI reasoning
-  - No probabilistic behavior
-- Clear separation of concerns:
-  - Core ≠ Schema ≠ IO ≠ CLI
-- “Kernel does not judge, only validates and replays” principle established
-
-Artifacts:
-- README.md (Non-goals, package boundaries)
-- Constitution / philosophy documents (conceptual)
+This document defines the development roadmap for **DecisionGraph Core**.
+The objective is not feature growth, but **long-term structural stability as a deterministic decision kernel**.
 
 ---
 
-## Phase 1 — Structural Foundation (Completed)
+## Phase 0 — Conceptual Foundation (Completed)
 
 **Status:** ✅ Completed
 
-This phase focused on making the project *structurally trustworthy*.
+### Objectives
+
+- Establish core principles:
+
+    - Deterministic behavior
+
+    - Replayable state
+
+    - No AI reasoning
+
+    - No probabilistic or heuristic logic
+
+- Clear responsibility boundaries:
+
+    - Core ≠ Schema ≠ IO ≠ CLI
+
+- Principle:
+
+    > The kernel does not decide. It validates and replays.
+
+
+### Deliverables
+
+- README (Non-goals / package boundaries)
+
+- Constitution documents (conceptual layer)
+
+
+---
+
+## Phase 1 — Structural Infrastructure (Completed)
+
+**Status:** ✅ Completed
+
+This phase ensured the project became structurally trustworthy.
 
 ### Achievements
-- Monorepo structure stabilized
-- TypeScript Project References fully wired
-- Dev-time type checking vs build-time emit clearly separated
-- No generated artifacts committed under `src/`
-- Root `tsconfig.json` added for full graph validation
-- CI validates TypeScript project graph (`tsc -b`)
-- Environment parity confirmed:
-  - macOS / Windows
-  - Node 20.x
-  - pnpm 9.x
 
-### Guarantees Achieved
+- Stable monorepo structure
+
+- Full TypeScript Project References
+
+- Separation of dev type-checking and build emit
+
+- No generated artifacts inside `src/`
+
+- Root-level graph validation via `tsconfig.json`
+
+- CI execution of `tsc -b`
+
+- Environment consistency:
+
+    - macOS / Windows
+
+    - Node.js 20.x
+
+    - pnpm 9.x
+
+
+### Guarantees Established
+
 - Reproducible builds
-- Deterministic type graph
-- No hidden cross-package coupling
-- CI reflects local reality
 
-This phase establishes the **“load-bearing skeleton”** of the project.
+- Deterministic dependency graph
 
----
+- No implicit package coupling
 
-## Phase 2 — Core Maturity & Invariants
+- CI/local behavior parity
 
-**Status:** 🟡 Planned / _Partially in Progress_
 
-Focus: strengthen **semantic correctness** without increasing surface area.
-
-This phase consolidates and formalizes invariants that have already been
-introduced at the specification level, and ensures they are fully enforced
-and testable at the kernel boundary.
-
-### Goals
-
-- Explicitly define and formalize **core invariants**
-- Strengthen kernel-level validation (without expanding API surface)
-- Clarify and harden internal consistency guarantees
-
-### Already Established (Ahead of Schedule)
-
-- Core invariants documented in **Constitution v0.2**
-- Normative alignment between:
-    - Constitution
-    - JSON Schema
-    - Minimal Kernel API
-    - Core domain types
-- Commit immutability and append-only semantics fixed
-- Determinism and replay guarantees explicitly specified
-
-### Candidate Work
-
-- Formalize invariants for
-    - Graph structure
-    - Node / Edge identity
-    - Temporal consistency
-- Refine error typing and classification
-- Tighten `lint`, `diff`, and `replay` contracts
-- Add minimal, high-signal tests for invariant enforcement
-
-### Non-goals
-
-- No performance optimizations
-- No new storage backends
-- No convenience APIs that weaken guarantees
-
-### Phase 2 Exit Criteria (Definition of Done)
-
-Phase 2 is **not** about “finishing” the Core.
-Phase 2 is complete when the Core is stable enough to be treated as a
-**deterministic decision kernel**, so that higher layers (ClaimAtom, TraceOS, etc.)
-can start building on top of it.
-
-Phase 2 is considered DONE only when all of the following are true:
-
-#### A) The minimal end-to-end scenario works
-- A minimal Graph (Nodes / Edges) can be constructed
-- Operations can be applied (`apply`)
-- A commit can be created
-- `replay(asOf)` reconstructs the state at commit time
-
-#### B) Invariants are enforced in a non-bypassable way
-- Graph immutability after commit is enforced at the Core entrypoint
-- Callers cannot bypass immutability by supplying a permissive/custom policy
-- The append-only contract cannot be broken at the Core level
-
-#### C) Failures are deterministically classified
-- Invariant violations are always treated as `ERROR`
-- Errors have at least a minimal stable code vocabulary
-  (e.g. `IMMUTABLE_AFTER_COMMIT`)
-- Error outputs are reproducible and do not vary across environments
-
-#### D) Golden tests (fixed fixtures) exist
-- At least 10 JSON fixtures exist for the minimal scenario
-- Fixtures cover the full loop: `apply → commit → replay`
-- Fixtures are executed in CI
+This phase established the **load-bearing skeleton** of the project.
 
 ---
 
-Once these criteria are met, DecisionGraph Core is considered to have reached:
+## Phase 2 — Core Maturity & Invariants (In Progress)
 
-**“Groundwork complete: safe to start building the superstructure (ClaimAtom MVP).”**
+**Status:** 🟡 In Progress
+(**Non-bypassable invariants are now enforced**)
+
+The goal of Phase 2 is to strengthen semantic correctness without expanding surface area.
 
 ---
 
-## Phase 3 — Policy & Extension Boundaries (Future)
+### Already Achieved
+
+- Constitution v0.2 finalized
+
+- “Specification over implementation” order established
+
+- Commit immutability enforced at kernel entry
+
+- Constitutional enforcement is non-bypassable
+
+    - `apply()` always runs ConstitutionalPolicy first
+
+    - `lint()` always runs ConstitutionalPolicy first
+
+- Policy injection can no longer weaken invariants
+
+- Append-only constraints enforced at kernel level
+
+- Runtime vocabulary enforcement:
+
+    - NodeStatus
+
+    - EdgeStatus
+
+    - EdgeType
+
+- Violation severity introduced
+
+- Deterministic error classification established
+
+- Single-commit constraint enforced
+
+- Duplicate ID detection (node / edge / commit)
+
+
+The Constitution is no longer documentation —
+it is executable law.
+
+---
+
+## Phase 2 Exit Criteria
+
+Phase 2 does not mean “feature complete.”
+It means **the kernel is safe to build upon.**
+
+---
+
+### A) Minimal Scenario Round-Trip
+
+- Create minimal Graph (Node / Edge)
+
+- Apply operations
+
+- Create commit
+
+- Replay state at commit
+
+
+**Status:** 🟡 Partially complete
+(Golden fixtures not yet implemented)
+
+---
+
+### B) Non-bypassable Invariants
+
+- No mutation after commit
+
+- Cannot bypass immutability via injected policy
+
+- Append-only semantics cannot be broken
+
+
+**Status:** ✅ Complete
+(ConstitutionalPolicy always enforced before caller policy)
+
+---
+
+### C) Deterministic Failure Semantics
+
+- Invariant violations classified as `ERROR`
+
+- Stable violation codes
+
+- Output does not vary across environments
+
+
+**Status:** ✅ Complete
+
+---
+
+### D) Golden Test Suite
+
+- ≥ 10 JSON fixtures
+
+- apply → commit → replay round-trip validation
+
+- CI enforced
+
+
+**Status:** ⬜ Not started
+
+---
+
+### Explicit Non-Goals (Phase 2)
+
+- Performance optimization
+
+- Storage implementations
+
+- Convenience APIs that weaken guarantees
+
+- Surface area expansion
+
+
+---
+
+When Phase 2 completes, DecisionGraph Core becomes:
+
+> A minimal, institutionally enforceable decision kernel.
+
+---
+
+## Phase 3 — Policy Boundary & Extension Safety (Future)
 
 **Status:** ⚪ Planned
 
-Focus: preventing future complexity collapse.
+Objective: Prevent long-term structural erosion.
 
-### Goals
-- Prevent policy logic from bloating the core
-- Make extension points explicit and safe
+### Planned Work
 
-### Candidate Work
-- Evaluate extracting policies into:
-  - `@decisiongraph/policies`
-- Formalize:
-  - Policy interfaces
-  - Policy compatibility rules
-- Define versioning strategy between:
-  - Core
-  - Schema
-  - IO adapters
+- Potential externalization of policies
 
-This phase protects the **long-term maintainability** of the kernel.
+    - e.g., `@decisiongraph/policies`
 
----
+- Formalization of policy compatibility rules
 
-## Phase 4 — Ecosystem & Tooling (Future)
+- Version boundary clarification:
 
-**Status:** ⚪ Optional / Downstream
+    - Core
 
-Focus: usability *around* the core, not inside it.
+    - Schema
 
-### Possible Directions
-- Better CLI ergonomics (without leaking abstractions)
-- Visualization or inspection tools
-- Integration examples (TraceOS, ClaimAtom, etc.)
+    - IO
 
-These must remain **strictly layered above the core**.
+
+This phase acts as a **long-term stability barrier**.
 
 ---
 
-## Explicit Non-Goals (Always)
+## Phase 4 — Ecosystem & Tooling (Optional / Downstream)
 
-The following are intentionally out of scope for DecisionGraph Core:
+**Status:** ⚪ Downstream
 
-- AI reasoning or inference
-- Probabilistic or heuristic behavior
+Objective: Improve usability outside the kernel.
+
+Possible directions:
+
+- CLI refinement (without abstraction leakage)
+
+- Visualization tools
+
+- Integration examples:
+
+    - ClaimAtom
+
+    - TraceOS
+
+
+All such tools must remain strictly outside the Core.
+
+---
+
+## Permanent Non-Goals (Always)
+
+DecisionGraph Core will never include:
+
+- AI reasoning
+
+- Probabilistic behavior
+
 - Workflow engines
-- Permission systems
-- Organization-specific logic
-- UI concerns
 
-If a feature requires any of the above, it belongs in a higher layer.
+- Permission systems
+
+- Organization-specific logic
+
+- UI/UX layers
+
+
+These belong strictly to upper layers.
 
 ---
 
 ## Guiding Principle
 
-> **DecisionGraph Core is infrastructure.**
-> Boring is good. Predictable is essential.
-> Every added feature must justify its impact on determinism.
+> DecisionGraph Core is infrastructure.
+> Boring is a virtue.
+> Predictability is mandatory.
+>
+> Every change must strengthen determinism.# DecisionGraph Core – Roadmap (Revised)
+
+This document defines the development roadmap for **DecisionGraph Core**.
+The objective is not feature growth, but **long-term structural stability as a deterministic decision kernel**.
+
+---
+
+## Phase 0 — Conceptual Foundation (Completed)
+
+**Status:** ✅ Completed
+
+### Objectives
+
+- Establish core principles:
+
+    - Deterministic behavior
+
+    - Replayable state
+
+    - No AI reasoning
+
+    - No probabilistic or heuristic logic
+
+- Clear responsibility boundaries:
+
+    - Core ≠ Schema ≠ IO ≠ CLI
+
+- Principle:
+
+    > The kernel does not decide. It validates and replays.
+
+
+### Deliverables
+
+- README (Non-goals / package boundaries)
+
+- Constitution documents (conceptual layer)
+
+
+---
+
+## Phase 1 — Structural Infrastructure (Completed)
+
+**Status:** ✅ Completed
+
+This phase ensured the project became structurally trustworthy.
+
+### Achievements
+
+- Stable monorepo structure
+
+- Full TypeScript Project References
+
+- Separation of dev type-checking and build emit
+
+- No generated artifacts inside `src/`
+
+- Root-level graph validation via `tsconfig.json`
+
+- CI execution of `tsc -b`
+
+- Environment consistency:
+
+    - macOS / Windows
+
+    - Node.js 20.x
+
+    - pnpm 9.x
+
+
+### Guarantees Established
+
+- Reproducible builds
+
+- Deterministic dependency graph
+
+- No implicit package coupling
+
+- CI/local behavior parity
+
+
+This phase established the **load-bearing skeleton** of the project.
+
+---
+
+## Phase 2 — Core Maturity & Invariants (In Progress)
+
+**Status:** 🟡 In Progress
+(**Non-bypassable invariants are now enforced**)
+
+The goal of Phase 2 is to strengthen semantic correctness without expanding surface area.
+
+---
+
+### Already Achieved
+
+- Constitution v0.2 finalized
+
+- “Specification over implementation” order established
+
+- Commit immutability enforced at kernel entry
+
+- Constitutional enforcement is non-bypassable
+
+    - `apply()` always runs ConstitutionalPolicy first
+
+    - `lint()` always runs ConstitutionalPolicy first
+
+- Policy injection can no longer weaken invariants
+
+- Append-only constraints enforced at kernel level
+
+- Runtime vocabulary enforcement:
+
+    - NodeStatus
+
+    - EdgeStatus
+
+    - EdgeType
+
+- Violation severity introduced
+
+- Deterministic error classification established
+
+- Single-commit constraint enforced
+
+- Duplicate ID detection (node / edge / commit)
+
+
+The Constitution is no longer documentation —
+it is executable law.
+
+---
+
+## Phase 2 Exit Criteria
+
+Phase 2 does not mean “feature complete.”
+It means **the kernel is safe to build upon.**
+
+---
+
+### A) Minimal Scenario Round-Trip
+
+- Create minimal Graph (Node / Edge)
+
+- Apply operations
+
+- Create commit
+
+- Replay state at commit
+
+
+**Status:** 🟡 Partially complete
+(Golden fixtures not yet implemented)
+
+---
+
+### B) Non-bypassable Invariants
+
+- No mutation after commit
+
+- Cannot bypass immutability via injected policy
+
+- Append-only semantics cannot be broken
+
+
+**Status:** ✅ Complete
+(ConstitutionalPolicy always enforced before caller policy)
+
+---
+
+### C) Deterministic Failure Semantics
+
+- Invariant violations classified as `ERROR`
+
+- Stable violation codes
+
+- Output does not vary across environments
+
+
+**Status:** ✅ Complete
+
+---
+
+### D) Golden Test Suite
+
+- ≥ 10 JSON fixtures
+
+- apply → commit → replay round-trip validation
+
+- CI enforced
+
+
+**Status:** ⬜ Not started
+
+---
+
+### Explicit Non-Goals (Phase 2)
+
+- Performance optimization
+
+- Storage implementations
+
+- Convenience APIs that weaken guarantees
+
+- Surface area expansion
+
+
+---
+
+When Phase 2 completes, DecisionGraph Core becomes:
+
+> A minimal, institutionally enforceable decision kernel.
+
+---
+
+## Phase 3 — Policy Boundary & Extension Safety (Future)
+
+**Status:** ⚪ Planned
+
+Objective: Prevent long-term structural erosion.
+
+### Planned Work
+
+- Potential externalization of policies
+
+    - e.g., `@decisiongraph/policies`
+
+- Formalization of policy compatibility rules
+
+- Version boundary clarification:
+
+    - Core
+
+    - Schema
+
+    - IO
+
+
+This phase acts as a **long-term stability barrier**.
+
+---
+
+## Phase 4 — Ecosystem & Tooling (Optional / Downstream)
+
+**Status:** ⚪ Downstream
+
+Objective: Improve usability outside the kernel.
+
+Possible directions:
+
+- CLI refinement (without abstraction leakage)
+
+- Visualization tools
+
+- Integration examples:
+
+    - ClaimAtom
+
+    - TraceOS
+
+
+All such tools must remain strictly outside the Core.
+
+---
+
+## Permanent Non-Goals (Always)
+
+DecisionGraph Core will never include:
+
+- AI reasoning
+
+- Probabilistic behavior
+
+- Workflow engines
+
+- Permission systems
+
+- Organization-specific logic
+
+- UI/UX layers
+
+
+These belong strictly to upper layers.
+
+---
+
+## Guiding Principle
+
+> DecisionGraph Core is infrastructure.
+> Boring is a virtue.
+> Predictability is mandatory.
+>
+> Every change must strengthen determinism.# DecisionGraph Core – Roadmap (Revised)
+
+This document defines the development roadmap for **DecisionGraph Core**.
+The objective is not feature growth, but **long-term structural stability as a deterministic decision kernel**.
+
+---
+
+## Phase 0 — Conceptual Foundation (Completed)
+
+**Status:** ✅ Completed
+
+### Objectives
+
+- Establish core principles:
+
+    - Deterministic behavior
+
+    - Replayable state
+
+    - No AI reasoning
+
+    - No probabilistic or heuristic logic
+
+- Clear responsibility boundaries:
+
+    - Core ≠ Schema ≠ IO ≠ CLI
+
+- Principle:
+
+    > The kernel does not decide. It validates and replays.
+
+
+### Deliverables
+
+- README (Non-goals / package boundaries)
+
+- Constitution documents (conceptual layer)
+
+
+---
+
+## Phase 1 — Structural Infrastructure (Completed)
+
+**Status:** ✅ Completed
+
+This phase ensured the project became structurally trustworthy.
+
+### Achievements
+
+- Stable monorepo structure
+
+- Full TypeScript Project References
+
+- Separation of dev type-checking and build emit
+
+- No generated artifacts inside `src/`
+
+- Root-level graph validation via `tsconfig.json`
+
+- CI execution of `tsc -b`
+
+- Environment consistency:
+
+    - macOS / Windows
+
+    - Node.js 20.x
+
+    - pnpm 9.x
+
+
+### Guarantees Established
+
+- Reproducible builds
+
+- Deterministic dependency graph
+
+- No implicit package coupling
+
+- CI/local behavior parity
+
+
+This phase established the **load-bearing skeleton** of the project.
+
+---
+
+## Phase 2 — Core Maturity & Invariants (In Progress)
+
+**Status:** 🟡 In Progress
+(**Non-bypassable invariants are now enforced**)
+
+The goal of Phase 2 is to strengthen semantic correctness without expanding surface area.
+
+---
+
+### Already Achieved
+
+- Constitution v0.2 finalized
+
+- “Specification over implementation” order established
+
+- Commit immutability enforced at kernel entry
+
+- Constitutional enforcement is non-bypassable
+
+    - `apply()` always runs ConstitutionalPolicy first
+
+    - `lint()` always runs ConstitutionalPolicy first
+
+- Policy injection can no longer weaken invariants
+
+- Append-only constraints enforced at kernel level
+
+- Runtime vocabulary enforcement:
+
+    - NodeStatus
+
+    - EdgeStatus
+
+    - EdgeType
+
+- Violation severity introduced
+
+- Deterministic error classification established
+
+- Single-commit constraint enforced
+
+- Duplicate ID detection (node / edge / commit)
+
+
+The Constitution is no longer documentation —
+it is executable law.
+
+---
+
+## Phase 2 Exit Criteria
+
+Phase 2 does not mean “feature complete.”
+It means **the kernel is safe to build upon.**
+
+---
+
+### A) Minimal Scenario Round-Trip
+
+- Create minimal Graph (Node / Edge)
+
+- Apply operations
+
+- Create commit
+
+- Replay state at commit
+
+
+**Status:** 🟡 Partially complete
+(Golden fixtures not yet implemented)
+
+---
+
+### B) Non-bypassable Invariants
+
+- No mutation after commit
+
+- Cannot bypass immutability via injected policy
+
+- Append-only semantics cannot be broken
+
+
+**Status:** ✅ Complete
+(ConstitutionalPolicy always enforced before caller policy)
+
+---
+
+### C) Deterministic Failure Semantics
+
+- Invariant violations classified as `ERROR`
+
+- Stable violation codes
+
+- Output does not vary across environments
+
+
+**Status:** ✅ Complete
+
+---
+
+### D) Golden Test Suite
+
+- ≥ 10 JSON fixtures
+
+- apply → commit → replay round-trip validation
+
+- CI enforced
+
+
+**Status:** ⬜ Not started
+
+---
+
+### Explicit Non-Goals (Phase 2)
+
+- Performance optimization
+
+- Storage implementations
+
+- Convenience APIs that weaken guarantees
+
+- Surface area expansion
+
+
+---
+
+When Phase 2 completes, DecisionGraph Core becomes:
+
+> A minimal, institutionally enforceable decision kernel.
+
+---
+
+## Phase 3 — Policy Boundary & Extension Safety (Future)
+
+**Status:** ⚪ Planned
+
+Objective: Prevent long-term structural erosion.
+
+### Planned Work
+
+- Potential externalization of policies
+
+    - e.g., `@decisiongraph/policies`
+
+- Formalization of policy compatibility rules
+
+- Version boundary clarification:
+
+    - Core
+
+    - Schema
+
+    - IO
+
+
+This phase acts as a **long-term stability barrier**.
+
+---
+
+## Phase 4 — Ecosystem & Tooling (Optional / Downstream)
+
+**Status:** ⚪ Downstream
+
+Objective: Improve usability outside the kernel.
+
+Possible directions:
+
+- CLI refinement (without abstraction leakage)
+
+- Visualization tools
+
+- Integration examples:
+
+    - ClaimAtom
+
+    - TraceOS
+
+
+All such tools must remain strictly outside the Core.
+
+---
+
+## Permanent Non-Goals (Always)
+
+DecisionGraph Core will never include:
+
+- AI reasoning
+
+- Probabilistic behavior
+
+- Workflow engines
+
+- Permission systems
+
+- Organization-specific logic
+
+- UI/UX layers
+
+
+These belong strictly to upper layers.
+
+---
+
+## Guiding Principle
+
+> DecisionGraph Core is infrastructure.
+> Boring is a virtue.
+> Predictability is mandatory.
+>
+> Every change must strengthen determinism.
 
 ---
 
