@@ -1,0 +1,26 @@
+name: Decision Lint
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  decision-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install
+        run: pnpm -w install --frozen-lockfile
+
+      - name: Build
+        run: pnpm -w build
+
+      - name: Lint (constitution)
+        run: node packages/cli/bin/decisiongraph lint decisions/demo.json

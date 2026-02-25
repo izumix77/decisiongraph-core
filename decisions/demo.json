@@ -1,0 +1,22 @@
+{
+  "version": "0.2",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:demo-1",
+        "kind": "Demo",
+        "status": "Active",
+        "createdAt": "2026-02-06T00:00:00.000Z",
+        "author": "A:izzy",
+        "payload": { "title": "This should pass" }
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-02-06T00:00:01.000Z",
+      "author": "A:izzy"
+    }
+  ]
+}
