@@ -1,3 +1,6 @@
+[![CI](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml/badge.svg)](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml)
+[![Decision Lint](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml/badge.svg)](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml)
+
 # DecisionGraph Core
 
 **DecisionGraph Core** is a deterministic kernel for recording, traversing, and replaying
