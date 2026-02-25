@@ -23,4 +23,11 @@ jobs:
         run: pnpm -w build
 
       - name: Validate (schema)
-        run: node packages/cli/dist/cli.js validate decisions/demo.json
+        run: node packages/cli/bin/decisiongraph validate decisions/demo.json
+
+      - name: Debug paths
+        run: |
+          ls -la packages/cli
+          ls -la packages/cli/dist || true
+          ls -la packages/cli/bin
+          node -e "console.log('node', process.version)"
