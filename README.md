@@ -1,5 +1,5 @@
-[![CI](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml/badge.svg)](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml)
-[![Decision Lint](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml/badge.svg)](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml)
+[![CI](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/izumix77/decisiongraph-core/actions/workflows/ci.yml)
+[![Decision Lint](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml/badge.svg?branch=main)](https://github.com/izumix77/decisiongraph-core/actions/workflows/decision-lint.yml)
 
 # DecisionGraph Core
 
