@@ -1,5 +1,7 @@
 # FAQ — DecisionGraph Core（日本語）
 
+Status: Non-normative. In case of conflict, Constitution v0.2 prevails.
+
 > ⚠️ この文書は FAQ.md（英語正本）の参考訳・補足です。
 > 仕様上の正式な判断は英語版および Constitution v0.2 を正とします。
 
@@ -80,7 +82,7 @@ DecisionGraph Core が保証したいのは：
 
 という性質です。
 
-AI を中に入れた瞬間、これらは壊れます。
+AI をカーネル内部に組み込むと、これらの保証は成立しません。
 
 AI は：
 - 提案

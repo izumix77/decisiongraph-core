@@ -1,5 +1,7 @@
-# FAQ — 哲学と設計思想
+# 哲学 ― 設計思想
 ## DecisionGraph Core
+
+Status: Non-normative. In case of conflict, Constitution v0.2 prevails.
 
 > ⚠️ 本文書は FAQ.philosophy.md（英語正本）に基づく日本語版です。
 > 規範的な解釈・仕様の最終的な根拠は、英語版および Constitution v0.2 を正とします。
@@ -159,7 +161,7 @@ DecisionGraph Core はそのために、次を禁じます。
 
 ## なぜ AI をカーネルに入れないのか？
 
-AI は、自分自身を決定論的に説明できないからです。
+AI は、その出力を決定論的に保証できないためです。
 
 LLM は：
 

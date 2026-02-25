@@ -1,3 +1,4 @@
-# Changelog
-## 0.0.0
-- Initial scaffold
+## 0.2.0
+- Public npm release
+- Deterministic kernel API stabilized
+- Constitution v0.2 aligned

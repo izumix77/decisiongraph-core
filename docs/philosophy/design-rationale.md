@@ -1,5 +1,7 @@
-# FAQ — Philosophy & Rationale
+# Philosophy — Design Rationale
 ## DecisionGraph Core
+
+Status: Non-normative. In case of conflict, Constitution v0.2 prevails.
 
 > This document explains *why* DecisionGraph Core is designed the way it is.
 > It is not an introduction.

@@ -1,4 +1,11 @@
 # Contributing
-- Keep @decisiongraph/core deterministic and pure.
-- No random ID generation.
-- No IO in core.
+
+DecisionGraph Core is a deterministic kernel.
+
+Rules:
+- No randomness
+- No implicit ordering
+- No IO in core
+- No probabilistic logic
+
+All changes must preserve replay determinism.

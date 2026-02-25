@@ -1,5 +1,7 @@
 # FAQ — DecisionGraph Core
 
+Status: Non-normative. In case of conflict, Constitution v0.2 prevails.
+
 > This document is the canonical English version.
 > Translations are provided for reference only.
 
