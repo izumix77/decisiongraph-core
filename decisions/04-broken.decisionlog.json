@@ -1,0 +1,40 @@
+{
+  "version": "0.3",
+  "graphId": "G:broken",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:broken-001",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-27T10:00:00.000Z",
+        "author": "A:test",
+        "payload": { "statement": "Depends on old security policy" }
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:broken-002",
+        "kind": "Decision",
+        "status": "Superseded",
+        "createdAt": "2026-02-27T10:01:00.000Z",
+        "author": "A:test",
+        "payload": { "statement": "Old auth decision (superseded)" }
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:broken-001",
+        "type": "depends_on",
+        "from": "N:broken-001",
+        "to": "N:broken-002",
+        "status": "Active",
+        "createdAt": "2026-02-27T10:02:00.000Z",
+        "author": "A:test"
+      }
+    }
+  ]
+}

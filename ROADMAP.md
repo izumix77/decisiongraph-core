@@ -34,7 +34,7 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 ## Phase 2 — Core Maturity & Invariants
 
-**Status:** ✅ Completed  
+**Status:** ✅ Completed
 (Non-bypassable invariants are enforced)
 
 ### Achieved
@@ -57,21 +57,46 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 ---
 
-## Phase 3 — Policy Boundary & Extension Safety
+## Phase 3a — Multi-Graph Kernel
+
+**Status:** ✅ Completed
+
+### Achieved
+- Constitution v0.3 finalized
+- `GraphStore` introduced as top-level container
+- `graphId` required on all Graphs and log files
+- ID uniqueness enforced GraphStore-wide (node.id / edge.id / commitId)
+- Cross-graph edges supported: `Edge.from` / `Edge.to` may reference Nodes in other Graphs
+- `EDGE_NOT_RESOLVED` enforced for unresolvable cross-graph references
+- Circular dependency detection across graph boundaries (DFS)
+- Per-Graph commit immutability preserved
+- Full backward compatibility with single-graph (v0.2) operations
+- `lintStore` for store-wide cross-graph validation
+- `resolveNode` / `resolveEdge` as first-class kernel operations
+- Migration guide v0.2 → v0.3
+
+---
+
+## Phase 3b — Policy Boundary & Extension Safety
 
 **Status:** ⚪ Planned
 
 - Keep policy logic from eroding the kernel
-- Possible externalization (e.g. `@decisiongraph/policies`)
-- Formalize policy compatibility and version boundaries (Core/Schema/IO)
+- Externalize domain policies (e.g. `@decisiongraph/policies`)
+- Formalize policy compatibility and version boundaries (Core / Schema / IO)
+- Ensure extension packages cannot weaken constitutional guarantees
+- The Core defines structure, responsibility, and replayability — not meaning
 
 ---
 
 ## Phase 4 — Ecosystem & Tooling
 
-**Status:** ⚪ Downstream / Optional
+**Status:** 🟡 In Progress
 
 - CLI refinement (without abstraction leakage)
+  - ✅ `traverse <directory>` — tree view of violations with dependency chains
+  - ✅ `DEPENDENCY_ON_SUPERSEDED` detection (Constitution Section 6)
+  - ✅ Cross-graph violation rendering with `payload`-based chain tracing
 - Visualization / inspection tools
 - Integration examples (ClaimAtom, TraceOS)
 
@@ -91,5 +116,3 @@ org-specific logic, or UI/UX. These belong to upper layers.
 > DecisionGraph Core is infrastructure.
 > Boring is a virtue. Predictability is mandatory.
 > Every change must strengthen determinism.
-
-

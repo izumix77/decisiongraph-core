@@ -1,274 +1,137 @@
-# DecisionGraph Core – ロードマップ（日本語・改訂版）
+# DecisionGraph Core — ロードマップ
 
-このドキュメントは **DecisionGraph Core** の開発ロードマップを示します。
-目的は機能追加ではなく、**決定論的な判断カーネルとしての長期的な構造安定性**です。
+DecisionGraph Core は、人間の意思決定をグラフ資産として記録・検証・再現する決定論的カーネルです。
+目的は機能追加ではなく、長期的な構造的安定性の確保です。
 
 ---
 
-## Phase 0 — 概念・思想の確立（完了）
+## Phase 0 — 概念基盤
 
 **ステータス:** ✅ 完了
 
-### 内容
+- 決定論的挙動 / 再現可能な状態
+- AI 推論なし / 確率論的ロジックなし
+- 明確な境界: Core ≠ Schema ≠ IO ≠ CLI
+- 原則: カーネルは決定を行わず、検証と再現のみを担当
 
-- コア思想の確立
+成果物: README、Constitution ドキュメント
 
-    - 決定論的であること
+---
 
-    - 状態を再生（Replay）可能であること
+## Phase 1 — 構造的インフラ
 
-    - AIによる推論を行わない
+**ステータス:** ✅ 完了
 
-    - 確率・ヒューリスティックを用いない
+- 安定した monorepo + TypeScript プロジェクト参照
+- 開発時の型チェックとビルド出力の分離
+- `src/` 下に生成物なし
+- ルートグラフの検証と CI `tsc -b`
+- 環境整合性: macOS / Windows, Node 20.x, pnpm 9.x
 
-- 明確な責務分離
+保証: 再現可能なビルド、決定論的依存関係、CI/ローカルの整合性
 
-    - Core ≠ Schema ≠ IO ≠ CLI
+---
 
-- 「Kernel は判断しない。検証し、再生するのみ」という原則
+## Phase 2 — コア成熟度 & 不変条件
 
+**ステータス:** ✅ 完了
+(バイパス不可の不変条件が適用済み)
+
+### 達成事項
+- Constitution v0.2 を確定、仕様先行で実装
+- バイパス不可の憲法適用:
+  - `apply/applyBatch` は呼び出しポリシー前に Constitution を適用
+  - `lint` は呼び出しポリシー前に Constitution を適用
+- コミット後の不変性 + 単一コミットルールを適用
+- 実行時語彙の適用: NodeStatus / EdgeStatus / EdgeType
+- ID 一意性の適用: node.id / edge.id / commitId
+- 違反の重大度を導入、決定論的エラー分類
+- ゴールデンフィクスチャ (≥10) に決定論的 `replayAt` スナップショットを含む
+
+> Constitution は実行可能な法である
+
+### 明示的な非ゴール (Phase 2)
+- パフォーマンス最適化、ストレージ実装
+- 保証を弱める便利 API
+- 表面上の機能拡張
+
+---
+
+## Phase 3a — マルチグラフカーネル
+
+**ステータス:** 🟡 設計中
+**権限:** Constitution v0.3 (DRAFT)
+
+### 背景
+
+CLI 検証中に、コミット済みグラフ間のクロスファイル (`depends_on`) 参照が `IMMUTABLE_AFTER_COMMIT` として拒否される設計上の制約が判明しました。
+これにより、単一グラフモデルでは DecisionGraph のコアユースケースが満たせないことがわかりました:
+
+> 「誰が、どの前提の下で何を決定したか、それが他の決定とどう関係するか？」
+
+クロスグラフ参照は回避策ではなく、必須の機能です。
+
+### 目標
+
+- `GraphStore` をトップレベルコンテナとして導入
+- `resolveNode(id)` / `resolveEdge(id)` をカーネル操作として実装
+- クロスグラフエッジ対応: `Edge.from` / `Edge.to` は他グラフノードを参照可能
+- クロスグラフエッジ検証: 解決不能な場合は `EDGE_NOT_RESOLVED`
+- グラフ境界をまたぐ循環依存検出
+- グラフ単位のコミット不変性保持
+- 単一グラフ (v0.2) 操作との完全互換性保持
 
 ### 成果物
 
-- README.md（Non-goals / パッケージ境界）
+- Constitution v0.3 (DRAFT → 確定)
+- `GraphStore` 型および操作 (`@decisiongraph/core`)
+- `applyBatch` / `lint` の更新、GraphStore 対応
+- クロスグラフ循環依存検出
+- Migration Guide v0.2 → v0.3
+- クロスグラフシナリオ用ゴールデンフィクスチャ
 
-- Constitution / 哲学ドキュメント（概念層）
+### 保持される不変条件
 
-
----
-
-## Phase 1 — 構造基盤の確立（完了）
-
-**ステータス:** ✅ 完了
-
-このフェーズでは、プロジェクトを**構造的に信用できる状態**にすることを目的としました。
-
-### 達成事項
-
-- モノレポ構造の安定化
-
-- TypeScript Project References の完全導入
-
-- dev用型チェックと build用 emit の明確な分離
-
-- `src/` 配下に生成物を置かない構成の確立
-
-- ルート `tsconfig.json` による全体グラフ検証
-
-- CI で `tsc -b` を実行し、構造破壊を防止
-
-- macOS / Windows 間での環境一致確認
-
-- Node.js 20.x / pnpm 9.x 固定
-
-
-### このフェーズで保証されたこと
-
-- 再現可能なビルド
-
-- 決定論的な型依存グラフ
-
-- 暗黙的依存の排除
-
-- ローカルと CI の挙動一致
-
-
-このフェーズは、プロジェクトの
-**「荷重を支える骨格（load-bearing skeleton）」** を確立しました。
+- コミット後のグラフ単位不変性は変更なし
+- Supersession モデル (`supersede_edge`) は変更なし
+- Node / Edge / Commit スキーマは変更なし
+- 単一グラフの GraphStore は v0.2 完全互換
 
 ---
 
-## Phase 2 — Core の成熟と不変条件
-
-**ステータス:** ✅ 完了
-
-目的は、**表面積を増やさずに意味的正しさを強化すること**です。
-
----
-
-### すでに達成されている事項
-
-- Constitution v0.2 の確定
-
-- 「実装より仕様が上位」という秩序の確立
-
-- Commit immutability の非バイパス強制（apply / lint 両方）
-
-- Policy injection による Constitution 回避の排除
-
-- append-only 制約の kernel 強制
-
-- runtime vocabulary enforcement
-
-    - NodeStatus
-
-    - EdgeStatus
-
-    - EdgeType
-
-- Violation に severity 導入
-
-- deterministic error 分類の確立
-
-- 複数 commit の禁止（single-commit 制約）
-
-- ID 重複検知（node / edge / commit）
-
-
----
-
-### Exit Criteria
-
-Phase 2 は「完成」ではなく、
-**上位レイヤーが安心して構築できる地盤完成**を意味します。
-
-完了条件: kernel 入口で Constitution を先行適用（apply/applyBatch）、single-commit と commit 後 immutability、runtime vocabulary + ID 一意性の不変条件、golden fixtures と replayAt の決定論的スナップショットが揃った。
-
----
-
-#### A) 最小シナリオの往復保証
-
-- Node / Edge 作成
-
-- Operation apply
-
-- commit 作成
-
-- replay(asOf) による復元
-
-
-**ステータス:** ✅ 完了
-
----
-
-#### B) 不変条件がバイパス不能
-
-- `apply` / `applyBatch` は常に Constitution を先に適用
-
-- 最初の commit 以後は不変（kernel 入口で強制）
-
-- single-commit 制約が強制される
-
-- runtime vocabulary enforcement（NodeStatus / EdgeStatus / EdgeType）
-
-- ID 一意性が強制される（node.id / edge.id）
-
-
-**ステータス:** ✅ 完了
-（ConstitutionalPolicy が常に apply / lint で先行実行）
-
----
-
-#### C) 失敗が deterministic に分類される
-
-- 不変条件違反は常に severity=ERROR
-
-- violation code が安定し、順序も決定論的
-
-- 出力の正規化が環境差に依存しない
-
-- Golden fixture により失敗出力の回帰を防止
-
-
-**ステータス:** ✅ 完了
-
----
-
-#### D) Golden Test が存在する
-
-- JSON fixture ≥ 10
-
-- apply → commit → replay 往復確認
-
-- CI 実行
-
-
-**ステータス:** ✅ 完了
-
----
-
-### 明確な非目標（Phase 2）
-
-- パフォーマンス最適化
-
-- ストレージ実装追加
-
-- 便利 API の導入
-
-- 抽象の緩和
-
-
----
-
-## Phase 3 — Policy と拡張境界の確立（将来）
+## Phase 3b — ポリシー境界 & 拡張安全性
 
 **ステータス:** ⚪ 計画中
 
-目的は、**将来的な複雑性崩壊を防ぐこと**です。
-
-### 想定内容
-
-- policy の外部化検討
-
-    - `@decisiongraph/policies`
-
-- Policy 互換性ルール明確化
-
-- Core / Schema / IO のバージョン関係整理
-
-- 拡張ポイントの固定
-
-
-これは、**長期保守性の防波堤**です。
+- ポリシーロジックがカーネルを侵食しないように維持
+- ドメインポリシーを外部化 (例: `@decisiongraph/policies`)
+- ポリシー互換性およびバージョン境界 (Core / Schema / IO) を明文化
+- 拡張パッケージが憲法上の保証を弱めないようにする
+- Core は構造・責任・再現性を定義し、意味は定義しない
 
 ---
 
-## Phase 4 — エコシステム・周辺ツール（将来）
+## Phase 4 — エコシステム & ツール
 
-**ステータス:** ⚪ 下流フェーズ
+**ステータス:** ⚪ 下流 / 任意
 
-目的は、Core 外側の使いやすさ向上です。
+- CLI の洗練 (抽象漏れなし)
+- 可視化 / 解析ツール
+- 統合例 (ClaimAtom, TraceOS)
 
-- CLI 改善（抽象漏洩禁止）
-
-- 可視化ツール
-
-- ClaimAtom / TraceOS 連携例
-
-
-※ すべて Core の外側に置く
+全てのツールは Core の外側に配置する必要があります。
 
 ---
 
-## 恒久的な非目標（Always）
+## 永続的非ゴール (常に)
 
-DecisionGraph Core は一貫して以下を行いません：
-
-- AI 推論
-
-- 確率的挙動
-
-- ワークフローエンジン
-
-- 権限管理
-
-- 組織依存ロジック
-
-- UI
-
+AI 推論、確率的挙動、ワークフローエンジン、権限システム、組織固有ロジック、UI/UX は含まれません。
+これらは上位層に属します。
 
 ---
 
-## 指導原則
+## 指針
 
-> DecisionGraph Core はインフラである。
-> 退屈であることは美徳であり、
-> 予測可能性は必須条件である。
->
-> すべての変更は、
-> 決定論性を強化するものでなければならない。
-
----
-
-- English roadmap: [ROADMAP.md](./ROADMAP.md)
-- 日本語ロードマップ: [ROADMAP.ja.md](./ROADMAP.ja.md)
+> DecisionGraph Core はインフラストラクチャである。
+> 退屈であることは美徳、予測可能性は必須。
+> すべての変更は決定論を強化するものでなければならない。

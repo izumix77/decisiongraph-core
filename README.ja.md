@@ -12,7 +12,7 @@
 
 > ⚠️ **注意**
 > この文書は README.md（英語版）の参考訳です。
-> 仕様・解釈・運用上の正式な根拠は、英語版 README.md および Constitution v0.2 を正とします。
+> 仕様・解釈・運用上の正式な根拠は、英語版 README.md および Constitution v0.3 を正とします。
 
 ---
 
@@ -164,26 +164,26 @@ DecisionGraph Core は、
 ### リポジトリ構成（正本の所在）
 
 本リポジトリは **monorepo** 構成です。
-
 ```text
 docs/
-  constitution/v0.2/   # 規範仕様（最上位の正本）
+  constitution/v0.3/   # 規範仕様（最上位の正本）
 packages/
   core/                # 決定論的カーネル（ドメインモデル・再生・差分）
   schema/              # JSON Schema（構造検証のみ）
   io-json/             # JSON ↔ core の変換・正規化
   cli/                 # CLI ラッパー（非規範）
 ```
-規範上の正本（source of truth）は docs/constitution/v0.2 です。
+
+規範上の正本（source of truth）は docs/constitution/v0.3 です。
 ドキュメントと実装の間に矛盾がある場合、
 Constitution が常に最優先されます。
 
 主要ドキュメント：
 
 - **README.md** — 概要（英語正本）
-- **Constitution v0.2** — 規範要件（最上位）
-- **JSON Schema v0.2** — データ検証仕様
-- **Minimal Kernel API v0.2** — 実装仕様
+- **Constitution v0.3** — 規範要件（最上位）
+- **JSON Schema v0.3** — データ検証仕様
+- **Minimal Kernel API v0.3** — 実装仕様
 
 **推奨読書順：**
 
@@ -201,9 +201,9 @@ DecisionGraph Core は明示的なバージョニングを行います。
 破壊的変更は必ず文書化され、
 移行が必要になります。
 
-v0.2 では、不変性の強化、
-作者情報の必須化、
-状態モデルの統一が導入されました。
+v0.3 では、トップレベルコンテナとして GraphStore を導入し、
+GraphId の必須化、GraphStore 全体での ID 一意性の強制、
+クロスグラフエッジのサポートが追加されました。
 
 ---
 
@@ -238,11 +238,9 @@ v0.2 では、不変性の強化、
 
 ## ステータス
 
-- **現在のバージョン:** v0.2
-
+- **現在のバージョン:** v0.3
 - **安定性:** アクティブ開発中
-
-- **規範上の最終権威:** Constitution v0.2
+- **規範上の最終権威:** Constitution v0.3
 
 
 ---

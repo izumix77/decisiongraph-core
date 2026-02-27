@@ -1,0 +1,35 @@
+{
+  "version": "0.3",
+  "graphId": "G:adr-002",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:sec-policy-002",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-03-01T10:00:00.000Z",
+        "author": "security-team"
+      }
+    },
+    {
+      "type": "supersede_edge",
+      "oldEdgeId": "E:adr-001-depends-sec",
+      "newEdge": {
+        "id": "E:adr-001-depends-sec-v2",
+        "type": "depends_on",
+        "from": "N:adr-001",
+        "to": "N:sec-policy-002",
+        "status": "Active",
+        "createdAt": "2026-03-01T10:00:00.000Z",
+        "author": "security-team"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:adr-2",
+      "createdAt": "2026-03-01T10:05:00.000Z",
+      "author": "security-team"
+    }
+  ]
+}

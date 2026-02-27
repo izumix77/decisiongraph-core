@@ -1,0 +1,22 @@
+{
+  "version": "0.3",
+  "graphId": "G:security-policy",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:sec-policy-001",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "author": "security-team"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:sec-1",
+      "createdAt": "2026-01-01T10:05:00.000Z",
+      "author": "security-team"
+    }
+  ]
+}

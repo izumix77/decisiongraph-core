@@ -143,34 +143,27 @@ It is not intended for end-user productivity tools or consumer-facing AI feature
 
 ## Project structure
 
-### Repository layout (source of truth)
-
-
 This repository is a monorepo.
-
 ```text
 docs/
-  constitution/v0.2/   # Normative specification (supreme authority)
+  constitution/v0.3/   # Normative specification (supreme authority)
 packages/
-  core/                # Deterministic kernel (domain model, replay, diff)
-  schema/              # JSON Schema validators (structural only)
-  io-json/             # JSON ↔ core mapping and normalization
-  cli/                 # CLI wrapper (non-normative interface)
+  core/                # Deterministic kernel (domain model, replay, diff)
+  schema/              # JSON Schema validators (structural only)
+  io-json/             # JSON ↔ core mapping and normalization
+  cli/                 # CLI wrapper (non-normative interface)
 ```
 
-The normative source of truth is docs/constitution/v0.2.
+The normative source of truth is docs/constitution/v0.3.
 If there is any conflict between documentation and implementation,
 the Constitution MUST take precedence.
 
 ### Key documents
 
 - README.md — this file (overview)
-
-- Constitution v0.2 — normative requirements (supreme authority)
-
-- JSON Schema v0.2 — data validation rules
-
-- Minimal Kernel API v0.2 — implementation specification
+- Constitution v0.3 — normative requirements (supreme authority)
+- JSON Schema v0.3 — data validation rules
+- Minimal Kernel API v0.3 — implementation specification
 
 #### Recommended reading order:
 
@@ -186,7 +179,8 @@ the Constitution MUST take precedence.
 DecisionGraph Core follows explicit versioning.
 
 Breaking changes are documented and require migration.
-v0.2 introduces stricter immutability, required authorship, and a unified state model.
+v0.3 introduces GraphStore as the top-level container, GraphId requirement,
+GraphStore-wide ID uniqueness, and cross-graph edge support.
 
 ---
 
@@ -220,11 +214,9 @@ The kernel remains neutral and reusable across domains.
 
 ## Status
 
-- **Current version:** v0.2
-
+- **Current version:** v0.3
 - **Stability:** Active development
-
-- **Normative authority:** Constitution v0.2
+- **Normative authority:** Constitution v0.3
 
 ---
 

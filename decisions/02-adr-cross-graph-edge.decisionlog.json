@@ -1,0 +1,34 @@
+{
+  "version": "0.3",
+  "graphId": "G:adr-001",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:adr-001",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-01T10:00:00.000Z",
+        "author": "dev-team-alpha"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:adr-001-depends-sec",
+        "type": "depends_on",
+        "from": "N:adr-001",
+        "to": "N:sec-policy-001",
+        "status": "Active",
+        "createdAt": "2026-02-01T10:00:00.000Z",
+        "author": "dev-team-alpha"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:adr-1",
+      "createdAt": "2026-02-01T10:05:00.000Z",
+      "author": "dev-team-alpha"
+    }
+  ]
+}
