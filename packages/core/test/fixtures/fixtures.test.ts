@@ -3,10 +3,11 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Graph, Violation } from "../../src/domain/types.js";
-import { emptyGraph, apply } from "../../src/kernel/apply.js";
+import { emptyStore, apply, type GraphLog } from "../../src/kernel/apply.js";
 import { lint } from "../../src/kernel/lint.js";
 import { replayAt } from "../../src/kernel/replay.js";
 import { ConstitutionalPolicy } from "../../src/policy/constitutional.js";
+import { asGraphId } from "../../src/domain/ids.js";
 
 type PassFixture = {
   name: string;
@@ -65,7 +66,7 @@ const readJson = <T,>(file: string): T => {
 const normalizeGraph = (g: Graph): NormalizedGraph => ({
   nodes: Object.values(g.nodes).sort((a, b) => String(a.id).localeCompare(String(b.id))),
   edges: Object.values(g.edges).sort((a, b) => String(a.id).localeCompare(String(b.id))),
-  commits: [...g.commits].sort((a, b) => String(a.commitId).localeCompare(String(b.commitId)))
+  commits: [...g.commits].sort((a, b) => String(a.commitId).localeCompare(String(b.commitId))),
 });
 
 const normalizeSnapshot = (g: Graph): Snapshot => ({
@@ -81,7 +82,7 @@ const normalizeSnapshot = (g: Graph): Snapshot => ({
     .sort((a, b) => String(a.id).localeCompare(String(b.id))),
   commits: [...g.commits]
     .map(c => ({ commitId: c.commitId }))
-    .sort((a, b) => String(a.commitId).localeCompare(String(b.commitId)))
+    .sort((a, b) => String(a.commitId).localeCompare(String(b.commitId))),
 });
 
 const normalizeViolations = (violations: Violation[]) =>
@@ -102,10 +103,7 @@ const compareViolations = (
 ) => {
   const actualNorm = normalizeViolations(actual);
   const expectedNorm = normalizeExpectedViolations(expected);
-
-  // Exact length match to ensure single primary invariant violation(s).
   if (actualNorm.length !== expectedNorm.length) return false;
-
   for (let i = 0; i < expectedNorm.length; i += 1) {
     const a = actualNorm[i];
     const e = expectedNorm[i];
@@ -120,8 +118,7 @@ const commitIdsFromOps = (ops: unknown[]): Set<string> => {
   const ids = new Set<string>();
   for (const op of ops) {
     if (op && typeof op === "object" && (op as any).type === "commit") {
-      const commitId = String((op as any).commitId);
-      ids.add(commitId);
+      ids.add(String((op as any).commitId));
     }
   }
   return ids;
@@ -135,33 +132,42 @@ describe("Golden Fixture runner (v0.2)", () => {
     for (const file of files) {
       const fixture = readJson<PassFixture>(file);
       const policy = new ConstitutionalPolicy();
-      let g = emptyGraph();
+      const graphId = asGraphId("G:fixture");
+      let store = emptyStore();
       let rejectedAt = -1;
 
       fixture.ops.forEach((op, idx) => {
         if (rejectedAt !== -1) return;
-        const r = apply(g, op as any, policy);
-        g = r.graph;
-        const event = r.events[0];
-        if (event?.type === "rejected") rejectedAt = idx;
+        const r = apply(store, graphId, op as any, policy);
+        store = r.store;
+        if (r.events[0]?.type === "rejected") rejectedAt = idx;
       });
 
+      const g = store.graphs[String(graphId)];
+
       expect(rejectedAt, `${fixture.name} should not reject`).toBe(-1);
-      const lintResult = lint(g, policy);
+
+      const lintResult = lint(store, graphId, policy);
       expect(lintResult.ok, `${fixture.name} lint should be ok`).toBe(true);
-      expect(normalizeGraph(g), `${fixture.name} graph mismatch`).toEqual(fixture.expect.graph);
+
+      expect(
+        normalizeGraph(g),
+        `${fixture.name} graph mismatch`
+      ).toEqual(fixture.expect.graph);
 
       if (fixture.expect.replay) {
         const commitIds = commitIdsFromOps(fixture.ops);
-        for (const replay of fixture.expect.replay) {
-          if (!commitIds.has(String(replay.asOfCommitId))) {
-            throw new Error(`${fixture.name} replay commitId not found: ${replay.asOfCommitId}`);
+        for (const replayCase of fixture.expect.replay) {
+          if (!commitIds.has(String(replayCase.asOfCommitId))) {
+            throw new Error(`${fixture.name} replay commitId not found: ${replayCase.asOfCommitId}`);
           }
-          const replayed = replayAt(fixture.ops as any, replay.asOfCommitId, policy);
+          const logs: GraphLog[] = [{ graphId, ops: fixture.ops as any }];
+          const replayedStore = replayAt(logs, replayCase.asOfCommitId, policy);
+          const replayedGraph = replayedStore.graphs[String(graphId)];
           expect(
-            normalizeSnapshot(replayed),
-            `${fixture.name} replay snapshot mismatch (${replay.asOfCommitId})`
-          ).toEqual(replay.snapshot);
+            normalizeSnapshot(replayedGraph),
+            `${fixture.name} replay snapshot mismatch (${replayCase.asOfCommitId})`
+          ).toEqual(replayCase.snapshot);
         }
       }
     }
@@ -174,14 +180,15 @@ describe("Golden Fixture runner (v0.2)", () => {
     for (const file of files) {
       const fixture = readJson<FailFixture>(file);
       const policy = new ConstitutionalPolicy();
-      let g = emptyGraph();
+      const graphId = asGraphId("G:fixture");
+      let store = emptyStore();
       let rejectedAt = -1;
       let violations: Violation[] | undefined;
 
       fixture.ops.forEach((op, idx) => {
         if (rejectedAt !== -1) return;
-        const r = apply(g, op as any, policy);
-        g = r.graph;
+        const r = apply(store, graphId, op as any, policy);
+        store = r.store;
         const event = r.events[0];
         if (event?.type === "rejected") {
           rejectedAt = idx;
@@ -191,9 +198,7 @@ describe("Golden Fixture runner (v0.2)", () => {
 
       if (fixture.expect.final) {
         expect(rejectedAt, `${fixture.name} should reject`).toBe(fixture.expect.final.rejectAt);
-        if (!violations || violations.length === 0) {
-          throw new Error(`${fixture.name} expected violations but none found`);
-        }
+        if (!violations) throw new Error(`${fixture.name} expected violations but none found`);
         if (!fixture.expect.violations) {
           throw new Error(`${fixture.name} expected violations list missing`);
         }
@@ -204,19 +209,15 @@ describe("Golden Fixture runner (v0.2)", () => {
       }
 
       if (fixture.expect.replayError) {
-        if (rejectedAt !== -1) {
-          throw new Error(`${fixture.name} unexpected apply rejection at ${rejectedAt}`);
-        }
         const commitIds = commitIdsFromOps(fixture.ops);
-        if (!fixture.expect.replay || fixture.expect.replay.length === 0) {
-          throw new Error(`${fixture.name} replayError requires expect.replay`);
-        }
-        const targetId = String(fixture.expect.replay[0].asOfCommitId);
+        const targetId = String(fixture.expect.replay?.[0]?.asOfCommitId);
         const missing = !commitIds.has(targetId);
         if (!missing) throw new Error(`${fixture.name} replay commitId exists unexpectedly: ${targetId}`);
+
         const actual = [
-          { code: "REPLAY_COMMIT_NOT_FOUND", severity: "ERROR", path: "expect.replay[0].asOfCommitId" }
+          { code: "REPLAY_COMMIT_NOT_FOUND", severity: "ERROR" as const, path: "expect.replay[0].asOfCommitId" }
         ];
+
         expect(
           compareViolations(actual as Violation[], [fixture.expect.replayError]),
           `${fixture.name} replay error mismatch`

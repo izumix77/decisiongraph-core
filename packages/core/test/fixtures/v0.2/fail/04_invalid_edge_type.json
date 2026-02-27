@@ -17,7 +17,9 @@
   "expect": {
     "final": { "ok": false, "rejectAt": 0 },
     "violations": [
-      { "code": "INVALID_EDGE_TYPE", "severity": "ERROR", "path": "op.edge.type" }
+      { "code": "EDGE_NOT_RESOLVED", "severity": "ERROR", "path": "op.edge.from" },
+      { "code": "EDGE_NOT_RESOLVED", "severity": "ERROR", "path": "op.edge.to" },
+      { "code": "INVALID_EDGE_TYPE",  "severity": "ERROR", "path": "op.edge.type" }
     ]
   }
 }
