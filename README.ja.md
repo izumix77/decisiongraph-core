@@ -100,6 +100,20 @@ DecisionGraph Core は **Constitution-first** の設計を採用しています�
 これらは慣習ではなく、
 **カーネルレベルで強制**されます。
 
+### 識別子のスコープ（v0.3）
+
+すべての識別子は **GraphStore 全体でユニーク** です：
+
+- `NodeId` — Store 内のすべての Graph を通じて一意
+- `EdgeId` — Store 内のすべての Graph を通じて一意
+- `CommitId` — Store 内のすべての Graph を通じて一意
+
+GraphStore は **ひとつの世界** を表します。
+`commitId` はその世界における **共有された時間座標** であり、
+特定の Graph 内のローカルなマーカーではありません。
+
+Graph ローカルな一意性は、v0.x では意図的にサポートしていません。
+
 ---
 
 ## グラフとしての決定

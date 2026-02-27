@@ -86,6 +86,19 @@ Key guarantees:
 
 These are enforced at the kernel level, not by convention.
 
+### Identity scope (v0.3)
+
+All identifiers are **GraphStore-wide unique**:
+
+- `NodeId` — unique across all Graphs in the store
+- `EdgeId` — unique across all Graphs in the store
+- `CommitId` — unique across all Graphs in the store
+
+GraphStore represents **one world**. A `commitId` is a point in shared time,
+not a local marker within a single Graph.
+
+Graph-local uniqueness is intentionally **not supported** in v0.x.
+
 ---
 
 ## Decisions as a graph

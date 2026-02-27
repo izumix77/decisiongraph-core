@@ -32,6 +32,7 @@ function resolveEdgeInStore(store: GraphStore, edgeId: string): Graph | undefine
   return Object.values(store.graphs).find((g) => edgeId in g.edges);
 }
 
+// NodeId MUST be globally unique within GraphStore (Constitution v0.3).
 function collectAllNodeIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
@@ -40,6 +41,7 @@ function collectAllNodeIds(store: GraphStore): Set<string> {
   return ids;
 }
 
+// EdgeId MUST be globally unique within GraphStore (Constitution v0.3).
 function collectAllEdgeIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
@@ -48,6 +50,10 @@ function collectAllEdgeIds(store: GraphStore): Set<string> {
   return ids;
 }
 
+// commitId MUST be globally unique within GraphStore (Constitution v0.3).
+// GraphStore = one world; commitId = a point in shared time.
+// Graph-local commitId uniqueness is intentionally NOT supported in v0.x.
+// See: docs/constitution/v0.3 — Commit Scope
 function collectAllCommitIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
