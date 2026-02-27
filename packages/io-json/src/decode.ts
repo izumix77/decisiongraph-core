@@ -8,9 +8,9 @@ import {
   type Edge
 } from "@decisiongraph/core";
 import type { DecisionLogJson } from "@decisiongraph/schema";
+import { SUPPORTED_VERSIONS } from "./version.js";
 
 const err = (m: string) => new Error(m);
-
 const isObj = (x: unknown): x is Record<string, any> => !!x && typeof x === "object" && !Array.isArray(x);
 
 function reqStr(o: Record<string, any>, k: string): string {
@@ -46,7 +46,10 @@ function decodeEdge(o: any): Edge {
 }
 
 export function decodeDecisionLog(json: DecisionLogJson): Operation[] {
-  if (json.version !== "0.2") throw err(`Unsupported version: ${json.version}`);
+  if (!(SUPPORTED_VERSIONS as readonly string[]).includes(json.version)) {
+    throw err(`Unsupported version: ${json.version}`);
+  }
+
   const ops = json.ops;
   if (!Array.isArray(ops)) throw err("ops must be array");
 

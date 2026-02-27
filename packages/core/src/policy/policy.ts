@@ -1,6 +1,10 @@
-import type { Graph, Operation, Violation } from "../domain/types.js";
+import type { GraphStore, Operation, Violation } from "../domain/types.js";
+import type { GraphId } from "../domain/ids.js";
 
 export interface Policy {
-  validateOperation(graph: Graph, op: Operation): Violation[];
-  validateGraph(graph: Graph): Violation[];
+  // Single-graph operation validation
+  validateOperation(store: GraphStore, graphId: GraphId, op: Operation): Violation[];
+
+  // Whole-store validation (cross-graph edges, circular dependencies)
+  validateStore(store: GraphStore): Violation[];
 }
