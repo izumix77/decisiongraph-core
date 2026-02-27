@@ -3,3 +3,4 @@ export * from "./lint.js";
 export * from "./replay.js";
 export * from "./diff.js";
 export * from "./errors.js";
+export * from "./traverse.js";
