@@ -24,3 +24,14 @@
   - Graph-local commitId uniqueness intentionally not supported in v0.x
   - Cross-graph fixture runner deferred to Phase 3b
 
+---
+
+## v0.4.1 (2026-03-01)
+
+### Added
+- `DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)
+- CLI `--strict` flag — treat WARN as ERROR
+
+### Packages
+- `@decisiongraph/core@0.4.1`
+- `@decisiongraph/cli@0.1.0` (initial publish)

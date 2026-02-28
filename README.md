@@ -227,7 +227,7 @@ The kernel remains neutral and reusable across domains.
 
 ## Status
 
-- **Current version:** v0.3
+- **Current version:** v0.3.1 (core@0.4.1, cli@0.1.0)
 - **Stability:** Active development
 - **Normative authority:** Constitution v0.3
 
