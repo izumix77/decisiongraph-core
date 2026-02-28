@@ -1,0 +1,38 @@
+{
+  "version": "0.3",
+  "graphId": "G:warn-test",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:deprecated-001",
+        "kind": "Decision",
+        "status": "Deprecated",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "team"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:active-001",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:00:01.000Z",
+        "author": "team"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:warn-001",
+        "type": "depends_on",
+        "from": "N:active-001",
+        "to": "N:deprecated-001",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:00:02.000Z",
+        "author": "team"
+      }
+    }
+  ]
+}

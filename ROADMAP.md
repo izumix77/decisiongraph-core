@@ -89,6 +89,20 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 ---
 
+---
+
+## Phase 3b — Policy Boundary & Extension Safety
+
+**Status:** ⚪ Planned
+
+- Keep policy logic from eroding the kernel
+- Externalize domain policies (e.g. `@decisiongraph/policies`)
+- Formalize policy compatibility and version boundaries (Core / Schema / IO)
+- Ensure extension packages cannot weaken constitutional guarantees
+- The Core defines structure, responsibility, and replayability — not meaning
+
+---
+
 ## Phase 4 — Ecosystem & Tooling
 
 **Status:** 🟡 In Progress
@@ -101,6 +115,8 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 - Integration examples (ClaimAtom, TraceOS)
 
 All tooling must remain outside the Core.
+
+---
 
 ---
 

@@ -113,9 +113,14 @@ CLI 検証中に、コミット済みグラフ間のクロスファイル (`depe
 
 ## Phase 4 — エコシステム & ツール
 
-**ステータス:** ⚪ 下流 / 任意
+**ステータス:** 🟡 進行中
 
 - CLI の洗練 (抽象漏れなし)
+  - ✅ `traverse <directory>` — 違反のツリー表示と依存チェーン可視化
+  - ✅ `DEPENDENCY_ON_SUPERSEDED` 検出 (Constitution Section 6)
+  - ✅ Cross-graph 違反のレンダリング (`payload` ベースのチェーントレース)
+  - ✅ `DEPENDENCY_ON_DEPRECATED` 検出 (Constitution Section 6、WARN)
+  - ✅ `--strict` フラグ — WARN を ERROR として扱う
 - 可視化 / 解析ツール
 - 統合例 (ClaimAtom, TraceOS)
 

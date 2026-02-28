@@ -18,6 +18,7 @@ Commands:
   replay <file.json>                Output final GraphStore JSON
   diff <a.json> <b.json>            Output diff between two logs
   traverse <directory>              Tree view of violations with dependency chains
+  traverse <directory> --strict     Treat WARN as ERROR
   migrate ...                       (stub)
 `);
 }
@@ -92,7 +93,8 @@ export async function main(argv: string[]) {
   if (cmd === "traverse") {
     const path = rest[0];
     if (!path) { eprint("missing directory"); process.exit(2); }
-    const r = cmdTraverse(path);
+    const strict = rest.includes("--strict");
+    const r = cmdTraverse(path, { strict });
     if (!r.ok) process.exit(1);
     return;
   }

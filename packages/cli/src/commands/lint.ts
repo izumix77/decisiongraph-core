@@ -73,14 +73,21 @@ export function cmdLint(path: string): { ok: true } | { ok: false; errors: strin
 
 export type FileLintResult =
   | { file: string; ok: true }
-  | { file: string; ok: false; errors: string[]; violations: Violation[] };
+  | { file: string; ok: false; warn: boolean; errors: string[]; violations: Violation[] };
 
 export type DirLintResult = {
   results: FileLintResult[];
-  store: GraphStore;   // 最終的なGraphStore（traverse側でツリー構築に使う）
+  store: GraphStore;
 };
 
-export function cmdLintDir(dir: string): DirLintResult {
+export function cmdLintDir(dir: string, options?: { strict?: boolean }): DirLintResult {
+  const strict = options?.strict ?? false;
+  const isError = (v: Violation) =>
+    v.severity === "ERROR" || (strict && v.severity === "WARN");
+
+  const isWarnOnly = (violations: Violation[]) =>
+    violations.every(v => v.severity === "WARN");
+
   const files = readdirSync(dir)
     .filter((f) => f.endsWith(".decisionlog.json"))
     .sort();
@@ -92,24 +99,18 @@ export function cmdLintDir(dir: string): DirLintResult {
   for (const file of files) {
     const fullPath = join(dir, file);
     const loaded = loadAndDecode(fullPath);
-
     if (!loaded.ok) {
-      results.push({
-        file,
-        ok: false,
-        errors: loaded.errors,
-        violations: [],
-      });
+      results.push({ file, ok: false, warn: false, errors: loaded.errors, violations: [] });
       continue;
     }
 
     const { graphId, ops } = loaded;
     const applied = applyBatch(store, graphId, ops, policy);
     store = applied.store;
-
     const { errors, violations } = collectRejections(applied.events);
+
     if (errors.length > 0) {
-      results.push({ file, ok: false, errors, violations });
+      results.push({ file, ok: false, warn: isWarnOnly(violations), errors, violations });
       continue;
     }
 
@@ -122,6 +123,7 @@ export function cmdLintDir(dir: string): DirLintResult {
     results.push({
       file: "<store>",
       ok: false,
+      warn: isWarnOnly(lr.violations),
       errors: lr.violations.map(v => `${v.code}: ${v.message}${v.path ? `  at ${v.path}` : ""}`),
       violations: lr.violations,
     });

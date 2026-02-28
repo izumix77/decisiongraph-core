@@ -286,14 +286,22 @@ export class ConstitutionalPolicy implements Policy {
           // toが解決できた場合のみSupersededチェック（EDGE_NOT_RESOLVEDとの重複防止）
           const toNode = findNodeInStore(store, String(e.to));
           if (toNode && toNode.status === "Superseded") {
-            violations.push(v(
-              "DEPENDENCY_ON_SUPERSEDED",
-              `depends_on target '${e.to}' is Superseded`,
-              `graphs.${gid}.edges.${id}.to`,
-              "ERROR",
-              { fromNodeId: String(e.from) }
-            ));
-          }
+              violations.push(v(
+                "DEPENDENCY_ON_SUPERSEDED",
+                `depends_on target '${e.to}' is Superseded`,
+                `graphs.${gid}.edges.${id}.to`,
+                "ERROR",
+                { fromNodeId: String(e.from) }
+              ));
+            } else if (toNode && toNode.status === "Deprecated") {
+              violations.push(v(
+                "DEPENDENCY_ON_DEPRECATED",
+                `depends_on target '${e.to}' is Deprecated`,
+                `graphs.${gid}.edges.${id}.to`,
+                "WARN",
+                { fromNodeId: String(e.from) }
+              ));
+            }
         }
       }
 
