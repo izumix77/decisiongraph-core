@@ -109,8 +109,8 @@ Each relationship is an explicit, typed edge.
 
 ```text
 Decision A
- └─ depends_on → Decision B
-      └─ superseded_by → Decision C
+ └─ depends_on → Decision B
+      └─ superseded_by → Decision C
 ```
 
 There is no hidden meaning and no implicit inference.
@@ -154,6 +154,41 @@ It is not intended for end-user productivity tools or consumer-facing AI feature
 
 ---
 
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm 9+
+
+### 1. Clone and build
+
+```bash
+git clone https://github.com/izumix77/decisiongraph-core
+cd decisiongraph-core
+pnpm install && pnpm build
+```
+
+### 2. Validate decisions
+
+```bash
+node scripts/validate-decisions.mjs
+```
+
+### 3. Color options
+
+```bash
+node scripts/validate-decisions.mjs --no-color   # plain text output
+NO_COLOR=1 node scripts/validate-decisions.mjs   # via environment variable
+```
+
+> **Note:** `scripts/validate-decisions.mjs` is a minimal example showing direct usage
+> of `@decisiongraph/core`.
+> For rich output including dependency tree visualization, use `decisiongraph traverse`
+> via `@decisiongraph/cli`. See [ROADMAP.md](./ROADMAP.md) for the current status.
+
+---
+
 ## Project structure
 
 This repository is a monorepo.
@@ -165,6 +200,8 @@ packages/
   schema/              # JSON Schema validators (structural only)
   io-json/             # JSON ↔ core mapping and normalization
   cli/                 # CLI wrapper (non-normative interface)
+scripts/
+  validate-decisions.mjs  # Reference validation script (see Quick Start)
 ```
 
 The normative source of truth is docs/constitution/v0.3.
