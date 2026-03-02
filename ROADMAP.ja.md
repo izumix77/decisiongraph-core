@@ -121,6 +121,7 @@ CLI 検証中に、コミット済みグラフ間のクロスファイル (`depe
   - ✅ Cross-graph 違反のレンダリング (`payload` ベースのチェーントレース)
   - ✅ `DEPENDENCY_ON_DEPRECATED` 検出 (Constitution Section 6、WARN)
   - ✅ `--strict` フラグ — WARN を ERROR として扱う
+  - ✅ npm に公開済み (`@decisiongraph/cli@0.1.2`)
 - 可視化 / 解析ツール
 - 統合例 (ClaimAtom, TraceOS)
 

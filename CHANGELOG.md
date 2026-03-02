@@ -1,3 +1,42 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+---
+
+## v0.4.2 (2026-03-02)
+
+### Fixed
+- `@decisiongraph/cli`: `workspace:*` dependencies resolved to explicit versions for npm publish
+- `@decisiongraph/io-json`: `workspace:*` dependencies resolved to explicit versions for npm publish
+- Added `.npmrc` to root (`link-workspace-packages=false`) to prevent `workspace:*` from leaking into published packages
+
+### Changed
+- `scripts/validate-decisions.mjs`: updated to v0.3 GraphStore API (`emptyStore`, `applyBatch(store, graphId, ops, policy)`)
+- `scripts/validate-decisions.mjs`: added ANSI color output with `NO_COLOR` / `--no-color` support
+- `scripts/validate-decisions.mjs`: added `lintStore` call after all files applied to detect `DEPENDENCY_ON_SUPERSEDED` and `DEPENDENCY_ON_DEPRECATED`
+- README: added Quick Start section (CLI-first)
+- README_ja: added クイックスタート section
+- ROADMAP: removed duplicate Phase 3b section; updated Phase 4 CLI items
+
+### Packages
+- `@decisiongraph/io-json@0.1.1`
+- `@decisiongraph/cli@0.1.2`
+
+---
+
+## v0.4.1 (2026-03-01)
+
+### Added
+- `DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)
+- CLI `--strict` flag — treat WARN as ERROR
+
+### Packages
+- `@decisiongraph/core@0.4.1`
+- `@decisiongraph/cli@0.1.0` (initial publish)
+
+---
+
 ## v0.3.1
 
 ### Breaking Changes
@@ -23,15 +62,3 @@
   - `replayAt(commitId)` is deterministic across all graphs
   - Graph-local commitId uniqueness intentionally not supported in v0.x
   - Cross-graph fixture runner deferred to Phase 3b
-
----
-
-## v0.4.1 (2026-03-01)
-
-### Added
-- `DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)
-- CLI `--strict` flag — treat WARN as ERROR
-
-### Packages
-- `@decisiongraph/core@0.4.1`
-- `@decisiongraph/cli@0.1.0` (initial publish)

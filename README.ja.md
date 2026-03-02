@@ -173,6 +173,66 @@ DecisionGraph Core は、
 
 ---
 
+## クイックスタート
+
+### 必要なもの
+
+- Node.js 20+
+
+### 1. CLI をインストール
+
+```bash
+npm install @decisiongraph/cli
+```
+
+### 2. 決定ログを検証する
+
+```bash
+npx decisiongraph traverse ./decisions
+```
+
+### 3. 利用可能なコマンド
+
+```bash
+npx decisiongraph validate <file.json>           # スキーマ検証のみ
+npx decisiongraph lint <file.json>               # 検証 + デコード + コアlint
+npx decisiongraph lint <directory>               # *.decisionlog.json を一括lint
+npx decisiongraph traverse <directory>           # 依存チェーンのツリー表示
+npx decisiongraph traverse <directory> --strict  # WARN を ERROR として扱う
+npx decisiongraph replay <file.json>             # 最終 GraphStore JSON を出力
+npx decisiongraph diff <a.json> <b.json>         # 2つのログの差分を出力
+```
+
+### CI での利用例（GitHub Actions）
+
+```yaml
+- name: Lint decisions
+  run: npx decisiongraph traverse ./decisions --strict
+```
+
+---
+
+### コントリビューター向け（ソースからビルド）
+
+```bash
+git clone https://github.com/izumix77/decisiongraph-core
+cd decisiongraph-core
+pnpm install && pnpm build
+```
+
+カーネルを直接利用するミニマルなリファレンススクリプトも用意されています：
+
+```bash
+node scripts/validate-decisions.mjs
+```
+
+> **注意:** `scripts/validate-decisions.mjs` は `@decisiongraph/core` の直接利用例を示す
+> ミニマルなサンプルスクリプトです。
+> 依存チェーンのツリー表示など、リッチな出力が必要な場合は
+> `@decisiongraph/cli` の `decisiongraph traverse` を使用してください。
+
+---
+
 ## ドキュメント構成
 
 ### リポジトリ構成（正本の所在）
@@ -252,7 +312,7 @@ GraphId の必須化、GraphStore 全体での ID 一意性の強制、
 
 ## ステータス
 
-- **現在のバージョン:** v0.3.1 (core@0.4.1, cli@0.1.0)
+- **現在のバージョン:** v0.3.1 (core@0.4.1, cli@0.1.2)
 - **安定性:** アクティブ開発中
 - **規範上の最終権威:** Constitution v0.3
 

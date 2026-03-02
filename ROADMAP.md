@@ -89,34 +89,20 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 ---
 
----
-
-## Phase 3b — Policy Boundary & Extension Safety
-
-**Status:** ⚪ Planned
-
-- Keep policy logic from eroding the kernel
-- Externalize domain policies (e.g. `@decisiongraph/policies`)
-- Formalize policy compatibility and version boundaries (Core / Schema / IO)
-- Ensure extension packages cannot weaken constitutional guarantees
-- The Core defines structure, responsibility, and replayability — not meaning
-
----
-
 ## Phase 4 — Ecosystem & Tooling
 
 **Status:** 🟡 In Progress
 
 - CLI refinement (without abstraction leakage)
   - ✅ `traverse <directory>` — tree view of violations with dependency chains
-  - ✅ `DEPENDENCY_ON_SUPERSEDED` detection (Constitution Section 6)
+  - ✅ `DEPENDENCY_ON_SUPERSEDED` / `DEPENDENCY_ON_DEPRECATED` detection (Constitution Section 6)
   - ✅ Cross-graph violation rendering with `payload`-based chain tracing
+  - ✅ `--strict` flag — treat WARN as ERROR
+  - ✅ Published to npm as `@decisiongraph/cli@0.1.2`
 - Visualization / inspection tools
 - Integration examples (ClaimAtom, TraceOS)
 
 All tooling must remain outside the Core.
-
----
 
 ---
 

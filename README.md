@@ -159,9 +159,41 @@ It is not intended for end-user productivity tools or consumer-facing AI feature
 ### Prerequisites
 
 - Node.js 20+
-- pnpm 9+
 
-### 1. Clone and build
+### 1. Install the CLI
+
+```bash
+npm install @decisiongraph/cli
+```
+
+### 2. Validate decisions
+
+```bash
+npx decisiongraph traverse ./decisions
+```
+
+### 3. Available commands
+
+```bash
+npx decisiongraph validate <file.json>           # schema validation only
+npx decisiongraph lint <file.json>               # validate + decode + core lint
+npx decisiongraph lint <directory>               # lint all *.decisionlog.json files
+npx decisiongraph traverse <directory>           # tree view with dependency chains
+npx decisiongraph traverse <directory> --strict  # treat WARN as ERROR
+npx decisiongraph replay <file.json>             # output final GraphStore JSON
+npx decisiongraph diff <a.json> <b.json>         # diff between two logs
+```
+
+### Using in CI (GitHub Actions)
+
+```yaml
+- name: Lint decisions
+  run: npx decisiongraph traverse ./decisions --strict
+```
+
+---
+
+### For contributors (building from source)
 
 ```bash
 git clone https://github.com/izumix77/decisiongraph-core
@@ -169,23 +201,15 @@ cd decisiongraph-core
 pnpm install && pnpm build
 ```
 
-### 2. Validate decisions
+A minimal reference script is also available for direct kernel usage:
 
 ```bash
 node scripts/validate-decisions.mjs
 ```
 
-### 3. Color options
-
-```bash
-node scripts/validate-decisions.mjs --no-color   # plain text output
-NO_COLOR=1 node scripts/validate-decisions.mjs   # via environment variable
-```
-
 > **Note:** `scripts/validate-decisions.mjs` is a minimal example showing direct usage
-> of `@decisiongraph/core`.
-> For rich output including dependency tree visualization, use `decisiongraph traverse`
-> via `@decisiongraph/cli`. See [ROADMAP.md](./ROADMAP.md) for the current status.
+> of `@decisiongraph/core`. For rich output including dependency tree visualization,
+> use `decisiongraph traverse` via `@decisiongraph/cli`.
 
 ---
 
@@ -264,7 +288,7 @@ The kernel remains neutral and reusable across domains.
 
 ## Status
 
-- **Current version:** v0.3.1 (core@0.4.1, cli@0.1.0)
+- **Current version:** v0.3.1 (core@0.4.1, cli@0.1.2)
 - **Stability:** Active development
 - **Normative authority:** Constitution v0.3
 
