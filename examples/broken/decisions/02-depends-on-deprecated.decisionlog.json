@@ -1,0 +1,40 @@
+{
+  "version": "0.3",
+  "graphId": "G:warn-test",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:warn-active-001",
+        "kind": "Decision",
+        "status": "Active",
+        "createdAt": "2026-02-27T10:00:00.000Z",
+        "author": "A:test",
+        "payload": { "statement": "Still depends on a deprecated decision" }
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:warn-deprecated-001",
+        "kind": "Decision",
+        "status": "Deprecated",
+        "createdAt": "2026-02-27T10:01:00.000Z",
+        "author": "A:test",
+        "payload": { "statement": "Legacy policy (deprecated, use new one)" }
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:warn-001",
+        "type": "depends_on",
+        "from": "N:warn-active-001",
+        "to": "N:warn-deprecated-001",
+        "status": "Active",
+        "createdAt": "2026-02-27T10:02:00.000Z",
+        "author": "A:test"
+      }
+    }
+  ]
+}

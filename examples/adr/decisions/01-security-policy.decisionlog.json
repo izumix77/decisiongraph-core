@@ -1,0 +1,26 @@
+{
+  "version": "0.3",
+  "graphId": "G:security",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:sec-001",
+        "kind": "ADR",
+        "status": "Active",
+        "createdAt": "2026-01-05T10:00:00.000Z",
+        "author": "A:security-team",
+        "payload": {
+          "title": "All external endpoints must use OAuth 2.0",
+          "statement": "Every external-facing API endpoint must authenticate via OAuth 2.0 with JWT tokens."
+        }
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:sec-1",
+      "createdAt": "2026-01-05T10:05:00.000Z",
+      "author": "A:security-team"
+    }
+  ]
+}

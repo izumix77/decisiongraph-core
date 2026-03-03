@@ -24,5 +24,17 @@ jobs:
       - name: Build
         run: pnpm -w build
 
-      - name: Lint (constitution)
+      # Smoke test: CLI is operational
+      - name: Lint (smoke test)
         run: node packages/cli/bin/decisiongraph lint decisions/demo.json
+
+      # ADR example: expected to FAIL (demonstrates superseded dependency detection)
+      # This is intentional — remove --strict to allow warnings only
+      - name: Traverse (adr example — expected violations)
+        run: |
+          node packages/cli/bin/decisiongraph traverse examples/adr/decisions || true
+
+      # Broken examples: expected to FAIL (demonstrates ERROR and WARN detection)
+      - name: Traverse (broken examples — expected violations)
+        run: |
+          node packages/cli/bin/decisiongraph traverse examples/broken/decisions || true

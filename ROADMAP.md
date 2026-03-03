@@ -86,6 +86,11 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 - Formalize policy compatibility and version boundaries (Core / Schema / IO)
 - Ensure extension packages cannot weaken constitutional guarantees
 - The Core defines structure, responsibility, and replayability — not meaning
+- **Node status transition operation** — explicit `Active → Superseded` transition
+  - Currently there is no operation to change a committed node's status
+  - Required to represent "a decision that becomes invalid over time"
+  - Key use case: ADR supersession in time-series scenarios
+  - Enabling this will unlock `supersede_node` as a first-class kernel operation
 
 ---
 
@@ -100,6 +105,8 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
   - ✅ `--strict` flag — treat WARN as ERROR
   - ✅ Published to npm as `@decisiongraph/cli@0.1.2`
 - Visualization / inspection tools
+  - `graph <directory>` — visualize the full dependency graph (not just violations)
+  - Show healthy dependency chains, not only errors
 - Integration examples (ClaimAtom, TraceOS)
 
 All tooling must remain outside the Core.

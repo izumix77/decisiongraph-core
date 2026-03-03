@@ -1,0 +1,38 @@
+{
+  "version": "0.3",
+  "graphId": "G:api",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:api-001",
+        "kind": "ADR",
+        "status": "Active",
+        "createdAt": "2026-01-25T10:00:00.000Z",
+        "author": "A:api-team",
+        "payload": {
+          "title": "API Gateway validates JWT tokens via Auth0 JWKS",
+          "statement": "The API Gateway delegates token validation to Auth0's JWKS endpoint, fulfilling the OAuth 2.0 requirement."
+        }
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:api-001-depends-auth-001",
+        "type": "depends_on",
+        "from": "N:api-001",
+        "to": "N:auth-001",
+        "status": "Active",
+        "createdAt": "2026-01-25T10:00:00.000Z",
+        "author": "A:api-team"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:api-1",
+      "createdAt": "2026-01-25T10:05:00.000Z",
+      "author": "A:api-team"
+    }
+  ]
+}
