@@ -12,9 +12,11 @@ function loadSchema(relativePath: string): AnySchema {
 
 const schemaV02 = loadSchema("../schemas/v0.2/decision.schema.json");
 const schemaV03 = loadSchema("../schemas/v0.3/decision.schema.json");
+const schemaV04 = loadSchema("../schemas/v0.4/decision.schema.json");
 
 export const schemaIdV02 = String((schemaV02 as any).$id);
 export const schemaIdV03 = String((schemaV03 as any).$id);
+export const schemaIdV04 = String((schemaV04 as any).$id);
 
 // legacy export for backward compat
 export const schemaId = schemaIdV02;
@@ -24,5 +26,6 @@ export function buildAjv() {
   addFormats(ajv);
   ajv.addSchema(schemaV02);
   ajv.addSchema(schemaV03);
+  ajv.addSchema(schemaV04);
   return ajv;
 }
