@@ -24,14 +24,14 @@ importers:
   packages/cli:
     dependencies:
       '@decisiongraph/core':
-        specifier: workspace:*
-        version: link:../core
+        specifier: 0.4.2
+        version: 0.4.2
       '@decisiongraph/io-json':
-        specifier: workspace:*
-        version: link:../io-json
+        specifier: 0.2.0
+        version: 0.2.0
       '@decisiongraph/schema':
-        specifier: workspace:*
-        version: link:../schema
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       typescript:
         specifier: ^5.5.0
@@ -61,6 +61,12 @@ importers:
         version: 2.1.1(ajv@8.17.1)
 
 packages:
+
+  '@decisiongraph/core@0.4.2':
+    resolution: {integrity: sha512-yMIq61+wkDvMKtBGcOXbILcxXOq/mX10pUZgMCrDUmIQq1CniHKUTRpppsi2EB4IaPLEM0gAWrS6/+4qrGCuCA==}
+
+  '@decisiongraph/io-json@0.2.0':
+    resolution: {integrity: sha512-QXkyHNChyIE00iFcbFfx5eIfNaV3NqRJck0Ix4PMkT9Z12yrt5hPtDLSO/WemCaF7xzXEAGm9gKFiU7fvkgJxA==}
 
   '@decisiongraph/schema@0.1.0':
     resolution: {integrity: sha512-pSp3ZUMpyk89c6wW7H+l5XIk7WFjbVk/BSl7npVDE17Vw9x8SlcqLNY5X6/+1BCl89gcyu3d48e62iDFAiN+QQ==}
@@ -612,6 +618,13 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@decisiongraph/core@0.4.2': {}
+
+  '@decisiongraph/io-json@0.2.0':
+    dependencies:
+      '@decisiongraph/core': 0.4.2
+      '@decisiongraph/schema': 0.1.0
 
   '@decisiongraph/schema@0.1.0':
     dependencies:
