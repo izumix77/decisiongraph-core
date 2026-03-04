@@ -45,8 +45,8 @@ importers:
   packages/io-json:
     dependencies:
       '@decisiongraph/core':
-        specifier: 0.4.1
-        version: 0.4.1
+        specifier: workspace:*
+        version: link:../core
       '@decisiongraph/schema':
         specifier: 0.1.0
         version: 0.1.0
