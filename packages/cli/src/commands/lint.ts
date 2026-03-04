@@ -6,6 +6,7 @@ import {
   ConstitutionalPolicy,
   applyBatch,
   emptyStore,
+  emptyGraph,
   lintStore,
   asGraphId,
   type Violation,
@@ -58,7 +59,7 @@ export function cmdLint(path: string): { ok: true } | { ok: false; errors: strin
 
   const { graphId, ops } = loaded;
   const policy = new ConstitutionalPolicy();
-  const applied = applyBatch(emptyStore(), graphId, ops, policy);
+  const applied = applyBatch(emptyGraph(graphId), graphId, ops, policy);
 
   const { errors } = collectRejections(applied.events);
   if (errors.length > 0) return { ok: false, errors };
@@ -105,6 +106,9 @@ export function cmdLintDir(dir: string, options?: { strict?: boolean }): DirLint
     }
 
     const { graphId, ops } = loaded;
+    if (!store.graphs[String(graphId)]) {
+      store = { graphs: { ...store.graphs, [String(graphId)]: { graphId, nodes: {}, edges: {}, commits: [] } } };
+    }
     const applied = applyBatch(store, graphId, ops, policy);
     store = applied.store;
     const { errors, violations } = collectRejections(applied.events);
@@ -131,3 +135,4 @@ export function cmdLintDir(dir: string, options?: { strict?: boolean }): DirLint
 
   return { results, store };
 }
+
