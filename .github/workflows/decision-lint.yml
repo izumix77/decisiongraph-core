@@ -29,7 +29,9 @@ jobs:
 
       # Smoke test: CLI is operational
       - name: Lint (smoke test)
-        run: node packages/cli/bin/decisiongraph lint decisions/demo.json
+        run: |
+          cat decisions/demo.json
+          node packages/cli/bin/decisiongraph lint decisions/demo.json
 
       # ADR example: expected to FAIL (demonstrates superseded dependency detection)
       # This is intentional — remove --strict to allow warnings only
