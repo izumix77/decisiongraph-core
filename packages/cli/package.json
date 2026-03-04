@@ -12,8 +12,8 @@
     "clean": "tsc -b tsconfig.build.json --clean"
   },
   "dependencies": {
-    "@decisiongraph/core": "0.4.2",
-    "@decisiongraph/schema": "0.1.0",
+    "@decisiongraph/core": "workspace:*",
+    "@decisiongraph/schema": "workspace:*",
     "@decisiongraph/io-json": "workspace:*"
   },
   "devDependencies": {
@@ -21,4 +21,6 @@
     "typescript": "^5.5.0"
   }
 }
+
+
 

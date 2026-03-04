@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@decisiongraph/core": "workspace:*",
-    "@decisiongraph/schema": "0.1.0"
+    "@decisiongraph/schema": "workspace:*"
   }
 }
+
