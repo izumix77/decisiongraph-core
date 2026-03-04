@@ -21,6 +21,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Check io-json version
+        run: cat packages/cli/node_modules/@decisiongraph/io-json/package.json | grep version
+
       - name: Build
         run: pnpm -w build
 
