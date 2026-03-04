@@ -14,10 +14,11 @@
   "dependencies": {
     "@decisiongraph/core": "0.4.2",
     "@decisiongraph/schema": "0.1.0",
-    "@decisiongraph/io-json": "0.2.0"
+    "@decisiongraph/io-json": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.0.0",
     "typescript": "^5.5.0"
   }
 }
+
