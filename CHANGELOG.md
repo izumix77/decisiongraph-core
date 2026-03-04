@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 
 ### Packages
 - `@decisiongraph/core@0.4.1` (internal — no version bump for RC)
-- `@decisiongraph/io-json@0.1.1` (decode.ts updated)
+- `@decisiongraph/io-json@0.2.0` (decode.ts updated)
 
 ---
 

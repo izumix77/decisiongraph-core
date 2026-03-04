@@ -89,40 +89,36 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 ---
 
-## Phase 3c — Topology-Derived State Model
+## Phase 3c — Topology-Derived Supersession
 
 **Status:** ✅ Completed
-**Authority:** Constitution v0.4 RC
 
 ### Background
 
-v0.3 stored `Superseded` as a Node attribute — a category error.
-A Node is a proposition. A proposition cannot contain its own negation or replacement state.
-Supersession is a relation between Nodes, not an attribute of any single Node.
+v0.3 stored supersession as `Node.status: "Superseded"` — a category error.
+A proposition cannot contain its own negation.
+Supersession is a relationship between nodes, not a property of a node.
 
 ### Achieved
+- `Node.status` removed — nodes carry no stored status field
+- `effectiveStatus(store, nodeId)` introduced — topology-derived, sole authority for node supersession
+- `EdgeStatus` simplified to binary: `"Active"` | `"Superseded"` (`"Deprecated"` removed)
+- `EdgeType` removes `"overrides"` — supersession expressed exclusively via `supersedes` edges
+- `supersede_node` op removed — supersession is expressed via `supersedes` edges only
+- `SELF_LOOP` violation added — edge from a node to itself is rejected
+- `supersede_edge` atomicity guaranteed — old edge marked Superseded and new edge added in single operation
+- `GraphStore`-based Policy interface — all policy signatures operate on `GraphStore`
+- `replay` / `replayAt` operate store-wide — boundary is global, not per-graph
+- `diffStore()` added for store-wide diff
+- Golden fixtures C01–C20 covering all v0.4 constitutional invariants
+- Migration guide v0.3 → v0.4
+- JSON Schema v0.4 — typed ops, `Node.status` prohibited
+- `io-json` updated to v0.4 (`supersede_node` removed, `Node.status` removed from decode)
 
-- Constitution v0.4 RC finalized
-- `Node.status` removed — Nodes carry no lifecycle state
-- `effectiveStatus(store, nodeId)` introduced as pure topology derivation
-- `Deprecated` and `overrides` removed from Core vocabulary
-- `EdgeStatus` simplified to binary: `Active | Superseded`
-- `SELF_LOOP` detection added (`from === to` → ERROR)
-- `supersedes` cycles detected as `CIRCULAR_DEPENDENCY`
-- `Policy` interface updated to GraphStore-based signatures
-- `replay` / `replayAt` → `GraphLog[]` → `GraphStore` (store-wide boundary)
-- `diffStore()` added
-- `supersede_edge` atomicity formalized and proven in test suite
-- Golden fixtures v0.4 (pass: 7, fail: 6)
-- Migration Guide v0.3 → v0.4
-- JSON Schema v0.4 (typed discriminated union per op, `Node.status` prohibited)
-- README updated with derived state model and replay ordering contract
-
-### Preserved Invariants
-
-- All v0.3 constitutional guarantees maintained (authorship, immutability, determinism)
-- Single-graph GraphStore remains fully valid
-- Node / Edge / Commit schemas structurally compatible (Node.status removal only breaking field change)
+### Preserved invariants
+- All v0.3 constitutional guarantees maintained
+- Single-graph GraphStore fully v0.2/v0.3 compatible in operation
+- Cross-graph edge resolution unchanged
 
 ---
 
@@ -134,12 +130,12 @@ Supersession is a relation between Nodes, not an attribute of any single Node.
   - ✅ `traverse <directory>` — tree view of violations with dependency chains
   - ✅ `DEPENDENCY_ON_SUPERSEDED` detection (Constitution Section 6)
   - ✅ Cross-graph violation rendering with `payload`-based chain tracing
+  - ✅ `DEPENDENCY_ON_DEPRECATED` detection (Constitution Section 6, WARN)
+  - ✅ `--strict` flag — treat WARN as ERROR
 - Visualization / inspection tools
 - Integration examples (ClaimAtom, TraceOS)
 
 All tooling must remain outside the Core.
-
----
 
 ---
 

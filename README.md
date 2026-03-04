@@ -86,7 +86,7 @@ Key guarantees:
 
 These are enforced at the kernel level, not by convention.
 
-### Identity scope (v0.3)
+### Identity scope (v0.4)
 
 All identifiers are **GraphStore-wide unique**:
 
@@ -99,6 +99,19 @@ not a local marker within a single Graph.
 
 Graph-local uniqueness is intentionally **not supported** in v0.x.
 
+### Supersession model (v0.4)
+
+Node supersession is **topology-derived**, not stored:
+
+- `Node` carries no `status` field
+- `effectiveStatus(store, nodeId)` returns `"Active"` or `"Superseded"` by traversing `supersedes` edges
+- This eliminates the category error of a proposition containing its own negation
+
+Edge supersession remains axiomatic:
+
+- `Edge.status` is `"Active"` or `"Superseded"` (binary; `"Deprecated"` removed)
+- `supersede_edge` is atomic — old edge marked Superseded and new edge added in a single operation
+
 ---
 
 ## Decisions as a graph
@@ -106,11 +119,10 @@ Graph-local uniqueness is intentionally **not supported** in v0.x.
 Each decision is a node.
 Each relationship is an explicit, typed edge.
 
-
 ```text
 Decision A
  └─ depends_on → Decision B
-      └─ superseded_by → Decision C
+      └─ supersedes → Decision C   (C is topology-derived Superseded)
 ```
 
 There is no hidden meaning and no implicit inference.
@@ -128,9 +140,7 @@ Human-readable text exists for interpretation and presentation only.
 This allows:
 
 - multi-language representations
-
 - deterministic behavior
-
 - stable replay across time and systems
 
 ---
@@ -140,104 +150,39 @@ This allows:
 DecisionGraph Core is suited for domains where decisions must remain accountable over time:
 
 - Architecture Decision Records (ADR)
-
 - Research and experimental reasoning
-
 - Legal and regulatory decision tracking
-
 - Governance and policy evolution
-
 - High-risk or long-lived system design
 
-
 It is not intended for end-user productivity tools or consumer-facing AI features.
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js 20+
-
-### 1. Install the CLI
-
-```bash
-npm install @decisiongraph/cli
-```
-
-### 2. Validate decisions
-
-```bash
-npx decisiongraph traverse ./decisions
-```
-
-### 3. Available commands
-
-```bash
-npx decisiongraph validate <file.json>           # schema validation only
-npx decisiongraph lint <file.json>               # validate + decode + core lint
-npx decisiongraph lint <directory>               # lint all *.decisionlog.json files
-npx decisiongraph traverse <directory>           # tree view with dependency chains
-npx decisiongraph traverse <directory> --strict  # treat WARN as ERROR
-npx decisiongraph replay <file.json>             # output final GraphStore JSON
-npx decisiongraph diff <a.json> <b.json>         # diff between two logs
-```
-
-### Using in CI (GitHub Actions)
-
-```yaml
-- name: Lint decisions
-  run: npx decisiongraph traverse ./decisions --strict
-```
-
----
-
-### For contributors (building from source)
-
-```bash
-git clone https://github.com/izumix77/decisiongraph-core
-cd decisiongraph-core
-pnpm install && pnpm build
-```
-
-A minimal reference script is also available for direct kernel usage:
-
-```bash
-node scripts/validate-decisions.mjs
-```
-
-> **Note:** `scripts/validate-decisions.mjs` is a minimal example showing direct usage
-> of `@decisiongraph/core`. For rich output including dependency tree visualization,
-> use `decisiongraph traverse` via `@decisiongraph/cli`.
 
 ---
 
 ## Project structure
 
 This repository is a monorepo.
+
 ```text
 docs/
-  constitution/v0.3/   # Normative specification (supreme authority)
+  constitution/v0.4/   # Normative specification (supreme authority)
 packages/
   core/                # Deterministic kernel (domain model, replay, diff)
   schema/              # JSON Schema validators (structural only)
   io-json/             # JSON ↔ core mapping and normalization
   cli/                 # CLI wrapper (non-normative interface)
-scripts/
-  validate-decisions.mjs  # Reference validation script (see Quick Start)
 ```
 
-The normative source of truth is docs/constitution/v0.3.
+The normative source of truth is `docs/constitution/v0.4`.
 If there is any conflict between documentation and implementation,
 the Constitution MUST take precedence.
 
 ### Key documents
 
 - README.md — this file (overview)
-- Constitution v0.3 — normative requirements (supreme authority)
-- JSON Schema v0.3 — data validation rules
-- Minimal Kernel API v0.3 — implementation specification
+- Constitution v0.4 — normative requirements (supreme authority)
+- JSON Schema v0.4 — data validation rules
+- Minimal Kernel API v0.4 — implementation specification
 
 #### Recommended reading order:
 
@@ -253,8 +198,9 @@ the Constitution MUST take precedence.
 DecisionGraph Core follows explicit versioning.
 
 Breaking changes are documented and require migration.
-v0.3 introduces GraphStore as the top-level container, GraphId requirement,
-GraphStore-wide ID uniqueness, and cross-graph edge support.
+v0.4 removes `Node.status` (supersession is now topology-derived via `effectiveStatus`),
+simplifies `EdgeStatus` to binary (`Active` | `Superseded`), removes the `overrides` edge type,
+and removes the `supersede_node` operation.
 
 ---
 
@@ -263,24 +209,16 @@ GraphStore-wide ID uniqueness, and cross-graph edge support.
 ### Open (this repository)
 
 - Deterministic graph model
-
 - Validation and replay logic
-
 - Constitutional guarantees
-
 - Language-independent structure
-
 
 ### Out of scope
 
 - Organizational workflows
-
 - Responsibility attribution systems
-
 - AI agents and prompt logic
-
 - Proprietary governance layers
-
 
 The kernel remains neutral and reusable across domains.
 
@@ -288,9 +226,9 @@ The kernel remains neutral and reusable across domains.
 
 ## Status
 
-- **Current version:** v0.3.1 (core@0.4.1, cli@0.1.2)
+- **Current version:** v0.4 RC (core@0.4.1, cli@0.1.2, io-json@0.2.0)
 - **Stability:** Active development
-- **Normative authority:** Constitution v0.3
+- **Normative authority:** Constitution v0.4
 
 ---
 
