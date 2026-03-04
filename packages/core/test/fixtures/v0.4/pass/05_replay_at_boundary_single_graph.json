@@ -1,0 +1,92 @@
+{
+  "name": "05_replay_at_boundary_single_graph",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:old",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:before",
+      "createdAt": "2026-01-01T00:01:00.000Z",
+      "author": "A:alice"
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:new",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:sup",
+        "type": "supersedes",
+        "from": "N:new",
+        "to": "N:old",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:03:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:after",
+      "createdAt": "2026-01-01T00:04:00.000Z",
+      "author": "A:alice"
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        { "id": "N:new", "kind": "Decision", "createdAt": "2026-01-01T00:02:00.000Z", "author": "A:alice" },
+        { "id": "N:old", "kind": "Decision", "createdAt": "2026-01-01T00:00:00.000Z", "author": "A:alice" }
+      ],
+      "edges": [
+        { "id": "E:sup", "type": "supersedes", "from": "N:new", "to": "N:old", "status": "Active" }
+      ],
+      "commits": [
+        { "commitId": "C:after" },
+        { "commitId": "C:before" }
+      ]
+    },
+    "replay": [
+      {
+        "asOfCommitId": "C:before",
+        "snapshot": {
+          "nodes": [
+            { "id": "N:old", "kind": "Decision", "effectiveStatus": "Active" }
+          ],
+          "edges": [],
+          "commits": [{ "commitId": "C:before" }]
+        }
+      },
+      {
+        "asOfCommitId": "C:after",
+        "snapshot": {
+          "nodes": [
+            { "id": "N:new", "kind": "Decision", "effectiveStatus": "Active" },
+            { "id": "N:old", "kind": "Decision", "effectiveStatus": "Superseded" }
+          ],
+          "edges": [
+            { "id": "E:sup", "type": "supersedes", "from": "N:new", "to": "N:old", "status": "Active" }
+          ],
+          "commits": [
+            { "commitId": "C:after" },
+            { "commitId": "C:before" }
+          ]
+        }
+      }
+    ]
+  }
+}

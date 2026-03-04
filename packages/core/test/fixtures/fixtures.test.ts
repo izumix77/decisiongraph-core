@@ -2,11 +2,12 @@ import { describe, it, expect } from "vitest";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Graph, Violation } from "../../src/domain/types.js";
-import { emptyStore, apply, type GraphLog } from "../../src/kernel/apply.js";
+import type { GraphStore, Violation } from "../../src/domain/types.js";  // Graph → GraphStore
+import type { NodeId } from "../../src/domain/ids.js";
+import { emptyStore, emptyGraph, apply } from "../../src/kernel/apply.js";           // GraphLog を削除
+import { replayAt, type GraphLog } from "../../src/kernel/replay.js";    // GraphLog はここ
 import { lint } from "../../src/kernel/lint.js";
-import { replayAt } from "../../src/kernel/replay.js";
-import { ConstitutionalPolicy } from "../../src/policy/constitutional.js";
+import { ConstitutionalPolicy, effectiveStatus } from "../../src/policy/constitutional.js";
 import { asGraphId } from "../../src/domain/ids.js";
 
 type PassFixture = {
@@ -14,8 +15,11 @@ type PassFixture = {
   ops: unknown[];
   expect: {
     final: { ok: true };
-    lintOk: true;
-    graph: NormalizedGraph;
+    // lintOk: true  — apply passes and graph is structurally valid
+    // lintOk: false — apply passes but lintStore detects violations (e.g. CIRCULAR_DEPENDENCY)
+    lintOk: boolean;
+    lintViolations?: Array<{ code: string; severity: Violation["severity"]; path?: string }>;
+    graph?: NormalizedGraph; // optional when lintOk: false
     replay?: Array<{ asOfCommitId: string; snapshot: Snapshot }>;
   };
 };
@@ -31,16 +35,25 @@ type FailFixture = {
   };
 };
 
+// v0.4: Node has no status field (Constitution v0.4 Section 2.3)
+// NormalizedGraph reflects the stored shape exactly — no status on nodes.
 type NormalizedGraph = {
-  nodes: Array<Graph["nodes"][string]>;
-  edges: Array<Graph["edges"][string]>;
-  commits: Graph["commits"];
+  nodes: Array<{ id: string; kind: string; createdAt: string; author: string; payload?: unknown }>;
+  edges: Array<{ id: string; type: string; from: string; to: string; status: string }>;
+  commits: Array<{ commitId: string }>;
 };
 
+// v0.4: Snapshot uses effectiveStatus (topology-derived) instead of stored node.status.
+// v0.2 fixtures that declared "status" in their snapshot must be updated to "effectiveStatus".
 type Snapshot = {
-  nodes: Array<Pick<Graph["nodes"][string], "id" | "kind" | "status"> & { payload?: unknown }>;
-  edges: Array<Pick<Graph["edges"][string], "id" | "type" | "from" | "to" | "status">>;
-  commits: Array<Pick<Graph["commits"][number], "commitId">>;
+  nodes: Array<{
+    id: string;
+    kind: string;
+    effectiveStatus: "Active" | "Superseded";  // derived — replaces stored status
+    payload?: unknown;
+  }>;
+  edges: Array<{ id: string; type: string; from: string; to: string; status: string }>;
+  commits: Array<{ commitId: string }>;
 };
 
 const here = fileURLToPath(new URL(".", import.meta.url));
@@ -63,27 +76,56 @@ const readJson = <T,>(file: string): T => {
   }
 };
 
-const normalizeGraph = (g: Graph): NormalizedGraph => ({
-  nodes: Object.values(g.nodes).sort((a, b) => String(a.id).localeCompare(String(b.id))),
-  edges: Object.values(g.edges).sort((a, b) => String(a.id).localeCompare(String(b.id))),
-  commits: [...g.commits].sort((a, b) => String(a.commitId).localeCompare(String(b.commitId))),
-});
+const normalizeGraph = (store: GraphStore, graphId: string): NormalizedGraph => {
+  const g = store.graphs[graphId];
+  if (!g) throw new Error(`graph '${graphId}' not found in store`);
+  return {
+    nodes: Object.values(g.nodes)
+      .map(n => {
+        const base: NormalizedGraph["nodes"][number] = {
+          id: String(n.id),
+          kind: n.kind,
+          createdAt: n.createdAt,
+          author: String(n.author),
+        };
+        if (n.payload !== undefined) base.payload = n.payload;
+        return base;
+      })
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    edges: Object.values(g.edges)
+      .map(e => ({ id: String(e.id), type: e.type, from: String(e.from), to: String(e.to), status: e.status }))
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    commits: [...g.commits]
+      .map(c => ({ commitId: String(c.commitId) }))
+      .sort((a, b) => a.commitId.localeCompare(b.commitId)),
+  };
+};
 
-const normalizeSnapshot = (g: Graph): Snapshot => ({
-  nodes: Object.values(g.nodes)
-    .map(n => {
-      const base = { id: n.id, kind: n.kind, status: n.status } as Snapshot["nodes"][number];
-      if (n.payload !== undefined) base.payload = n.payload;
-      return base;
-    })
-    .sort((a, b) => String(a.id).localeCompare(String(b.id))),
-  edges: Object.values(g.edges)
-    .map(e => ({ id: e.id, type: e.type, from: e.from, to: e.to, status: e.status }))
-    .sort((a, b) => String(a.id).localeCompare(String(b.id))),
-  commits: [...g.commits]
-    .map(c => ({ commitId: c.commitId }))
-    .sort((a, b) => String(a.commitId).localeCompare(String(b.commitId))),
-});
+// normalizeSnapshot derives effectiveStatus from topology — never reads node.status.
+const normalizeSnapshot = (store: GraphStore, graphId: string): Snapshot => {
+  const g = store.graphs[graphId];
+  if (!g) throw new Error(`graph '${graphId}' not found in store`);
+  return {
+    nodes: Object.values(g.nodes)
+      .map(n => {
+        const derived = effectiveStatus(store, n.id as NodeId);
+        const base: Snapshot["nodes"][number] = {
+          id: String(n.id),
+          kind: n.kind,
+          effectiveStatus: derived,
+        };
+        if (n.payload !== undefined) base.payload = n.payload;
+        return base;
+      })
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    edges: Object.values(g.edges)
+      .map(e => ({ id: String(e.id), type: e.type, from: String(e.from), to: String(e.to), status: e.status }))
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    commits: [...g.commits]
+      .map(c => ({ commitId: String(c.commitId) }))
+      .sort((a, b) => a.commitId.localeCompare(b.commitId)),
+  };
+};
 
 const normalizeViolations = (violations: Violation[]) =>
   violations
@@ -105,8 +147,8 @@ const compareViolations = (
   const expectedNorm = normalizeExpectedViolations(expected);
   if (actualNorm.length !== expectedNorm.length) return false;
   for (let i = 0; i < expectedNorm.length; i += 1) {
-    const a = actualNorm[i];
-    const e = expectedNorm[i];
+    const a = actualNorm[i]!;
+    const e = expectedNorm[i]!;
     if (a.code !== e.code) return false;
     if (a.severity !== e.severity) return false;
     if (e.path !== undefined && a.path !== e.path) return false;
@@ -133,7 +175,7 @@ describe("Golden Fixture runner (v0.2)", () => {
       const fixture = readJson<PassFixture>(file);
       const policy = new ConstitutionalPolicy();
       const graphId = asGraphId("G:fixture");
-      let store = emptyStore();
+      let store = emptyGraph(graphId);
       let rejectedAt = -1;
 
       fixture.ops.forEach((op, idx) => {
@@ -143,17 +185,29 @@ describe("Golden Fixture runner (v0.2)", () => {
         if (r.events[0]?.type === "rejected") rejectedAt = idx;
       });
 
-      const g = store.graphs[String(graphId)];
-
       expect(rejectedAt, `${fixture.name} should not reject`).toBe(-1);
 
       const lintResult = lint(store, graphId, policy);
-      expect(lintResult.ok, `${fixture.name} lint should be ok`).toBe(true);
 
-      expect(
-        normalizeGraph(g),
-        `${fixture.name} graph mismatch`
-      ).toEqual(fixture.expect.graph);
+      if (fixture.expect.lintOk === false) {
+        // lintOk: false — apply passed but lintStore should detect violations
+        expect(lintResult.ok, `${fixture.name} lint should fail`).toBe(false);
+        if (fixture.expect.lintViolations) {
+          const actual = lintResult.ok ? [] : lintResult.violations;
+          expect(
+            compareViolations(actual, fixture.expect.lintViolations),
+            `${fixture.name} lint violations mismatch`
+          ).toBe(true);
+        }
+      } else {
+        expect(lintResult.ok, `${fixture.name} lint should be ok`).toBe(true);
+        if (fixture.expect.graph) {
+          expect(
+            normalizeGraph(store, String(graphId)),
+            `${fixture.name} graph mismatch`
+          ).toEqual(fixture.expect.graph);
+        }
+      }
 
       if (fixture.expect.replay) {
         const commitIds = commitIdsFromOps(fixture.ops);
@@ -163,9 +217,8 @@ describe("Golden Fixture runner (v0.2)", () => {
           }
           const logs: GraphLog[] = [{ graphId, ops: fixture.ops as any }];
           const replayedStore = replayAt(logs, replayCase.asOfCommitId, policy);
-          const replayedGraph = replayedStore.graphs[String(graphId)];
           expect(
-            normalizeSnapshot(replayedGraph),
+            normalizeSnapshot(replayedStore, String(graphId)),
             `${fixture.name} replay snapshot mismatch (${replayCase.asOfCommitId})`
           ).toEqual(replayCase.snapshot);
         }
@@ -181,7 +234,7 @@ describe("Golden Fixture runner (v0.2)", () => {
       const fixture = readJson<FailFixture>(file);
       const policy = new ConstitutionalPolicy();
       const graphId = asGraphId("G:fixture");
-      let store = emptyStore();
+      let store = emptyGraph(graphId);
       let rejectedAt = -1;
       let violations: Violation[] | undefined;
 
@@ -217,7 +270,6 @@ describe("Golden Fixture runner (v0.2)", () => {
         const actual = [
           { code: "REPLAY_COMMIT_NOT_FOUND", severity: "ERROR" as const, path: "expect.replay[0].asOfCommitId" }
         ];
-
         expect(
           compareViolations(actual as Violation[], [fixture.expect.replayError]),
           `${fixture.name} replay error mismatch`

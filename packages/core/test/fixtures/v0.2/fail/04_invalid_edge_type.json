@@ -9,17 +9,32 @@
         "from": "N:1",
         "to": "N:2",
         "status": "Active",
-        "createdAt": "2026-02-06T00:00:00.000Z",
+        "createdAt": "2026-02-06T00:00:00Z",
         "author": "A:system"
       }
     }
   ],
   "expect": {
-    "final": { "ok": false, "rejectAt": 0 },
+    "final": {
+      "ok": false,
+      "rejectAt": 0
+    },
     "violations": [
-      { "code": "EDGE_NOT_RESOLVED", "severity": "ERROR", "path": "op.edge.from" },
-      { "code": "EDGE_NOT_RESOLVED", "severity": "ERROR", "path": "op.edge.to" },
-      { "code": "INVALID_EDGE_TYPE",  "severity": "ERROR", "path": "op.edge.type" }
+      {
+        "code": "EDGE_NOT_RESOLVED",
+        "severity": "ERROR",
+        "path": "op.edge.from"
+      },
+      {
+        "code": "EDGE_NOT_RESOLVED",
+        "severity": "ERROR",
+        "path": "op.edge.to"
+      },
+      {
+        "code": "INVALID_EDGE_TYPE",
+        "severity": "ERROR",
+        "path": "op.edge.type"
+      }
     ]
   }
 }

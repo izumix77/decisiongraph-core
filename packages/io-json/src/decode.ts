@@ -1,3 +1,8 @@
+// Constitution v0.4
+// - Node has no stored status field
+// - supersede_node op is removed
+// - SupersedeNodeOp type is removed
+
 import {
   asAuthorId,
   asCommitId,
@@ -5,13 +10,14 @@ import {
   asNodeId,
   type Operation,
   type Node,
-  type Edge
+  type Edge,
 } from "@decisiongraph/core";
 import type { DecisionLogJson } from "@decisiongraph/schema";
 import { SUPPORTED_VERSIONS } from "./version.js";
 
 const err = (m: string) => new Error(m);
-const isObj = (x: unknown): x is Record<string, any> => !!x && typeof x === "object" && !Array.isArray(x);
+const isObj = (x: unknown): x is Record<string, any> =>
+  !!x && typeof x === "object" && !Array.isArray(x);
 
 function reqStr(o: Record<string, any>, k: string): string {
   const v = o[k];
@@ -24,7 +30,6 @@ function decodeNode(o: any): Node {
   return {
     id: asNodeId(reqStr(o, "id")),
     kind: reqStr(o, "kind"),
-    status: reqStr(o, "status") as any,
     createdAt: reqStr(o, "createdAt"),
     author: asAuthorId(reqStr(o, "author")),
     payload: o["payload"]
@@ -49,7 +54,6 @@ export function decodeDecisionLog(json: DecisionLogJson): Operation[] {
   if (!(SUPPORTED_VERSIONS as readonly string[]).includes(json.version)) {
     throw err(`Unsupported version: ${json.version}`);
   }
-
   const ops = json.ops;
   if (!Array.isArray(ops)) throw err("ops must be array");
 
@@ -57,23 +61,29 @@ export function decodeDecisionLog(json: DecisionLogJson): Operation[] {
     if (!isObj(raw)) throw err("op must be object");
     const t = reqStr(raw, "type");
 
-    if (t === "add_node") return { type: "add_node", node: decodeNode(raw["node"]) };
-    if (t === "add_edge") return { type: "add_edge", edge: decodeEdge(raw["edge"]) };
+    if (t === "add_node")
+      return { type: "add_node", node: decodeNode(raw["node"]) } satisfies Operation;
+
+    if (t === "add_edge")
+      return { type: "add_edge", edge: decodeEdge(raw["edge"]) } satisfies Operation;
+
     if (t === "supersede_edge") {
       return {
         type: "supersede_edge",
         oldEdgeId: asEdgeId(reqStr(raw, "oldEdgeId")),
         newEdge: decodeEdge(raw["newEdge"])
-      };
+      } satisfies Operation;
     }
+
     if (t === "commit") {
       return {
         type: "commit",
         commitId: asCommitId(reqStr(raw, "commitId")),
         createdAt: reqStr(raw, "createdAt"),
         author: asAuthorId(reqStr(raw, "author"))
-      };
+      } satisfies Operation;
     }
+
     throw err(`Unknown op type: ${t}`);
   });
 }

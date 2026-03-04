@@ -1,0 +1,29 @@
+{
+  "name": "05_node_id_dup",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 1 },
+    "violations": [
+      { "code": "NODE_ID_DUP", "severity": "ERROR", "path": "op.node.id" }
+    ]
+  }
+}

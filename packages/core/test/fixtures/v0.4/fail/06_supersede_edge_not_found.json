@@ -1,0 +1,42 @@
+{
+  "name": "06_supersede_edge_not_found",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:b",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "supersede_edge",
+      "oldEdgeId": "E:nonexistent",
+      "newEdge": {
+        "id": "E:new",
+        "type": "depends_on",
+        "from": "N:a",
+        "to": "N:b",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 2 },
+    "violations": [
+      { "code": "EDGE_NOT_FOUND", "severity": "ERROR", "path": "op.oldEdgeId" }
+    ]
+  }
+}

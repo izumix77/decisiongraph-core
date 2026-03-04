@@ -3,17 +3,7 @@
   "ops": [
     {
       "type": "add_node",
-      "node": {
-        "id": "N:payload",
-        "kind": "Decision",
-        "status": "Active",
-        "createdAt": "2026-02-06T00:00:00.000Z",
-        "author": "A:system",
-        "payload": {
-          "source": "unit",
-          "confidence": 0.5
-        }
-      }
+      "node": { "id": "N:1", "kind": "Decision", "createdAt": "2026-02-06T00:00:00Z", "author": "A:system", "payload": { "title": "Use PostgreSQL" } }
     }
   ],
   "expect": {
@@ -21,17 +11,7 @@
     "lintOk": true,
     "graph": {
       "nodes": [
-        {
-          "id": "N:payload",
-          "kind": "Decision",
-          "status": "Active",
-          "createdAt": "2026-02-06T00:00:00.000Z",
-          "author": "A:system",
-          "payload": {
-            "source": "unit",
-            "confidence": 0.5
-          }
-        }
+        { "id": "N:1", "kind": "Decision", "createdAt": "2026-02-06T00:00:00Z", "author": "A:system", "payload": { "title": "Use PostgreSQL" } }
       ],
       "edges": [],
       "commits": []

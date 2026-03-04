@@ -3,40 +3,20 @@
   "ops": [
     {
       "type": "add_node",
-      "node": {
-        "id": "N:1",
-        "kind": "Decision",
-        "status": "Active",
-        "createdAt": "2026-02-06T00:00:00.000Z",
-        "author": "A:system"
-      }
+      "node": { "id": "N:1", "kind": "Decision", "createdAt": "2026-02-06T00:00:00Z", "author": "A:system" }
     },
     {
       "type": "add_node",
-      "node": {
-        "id": "N:2",
-        "kind": "Decision",
-        "status": "Active",
-        "createdAt": "2026-02-06T00:00:01.000Z",
-        "author": "A:system"
-      }
+      "node": { "id": "N:2", "kind": "Decision", "createdAt": "2026-02-06T00:00:01Z", "author": "A:system" }
     },
     {
       "type": "add_edge",
-      "edge": {
-        "id": "E:1",
-        "type": "supports",
-        "from": "N:1",
-        "to": "N:2",
-        "status": "Active",
-        "createdAt": "2026-02-06T00:00:02.000Z",
-        "author": "A:system"
-      }
+      "edge": { "id": "E:1", "type": "supports", "from": "N:1", "to": "N:2", "status": "Active", "createdAt": "2026-02-06T00:00:02Z", "author": "A:system" }
     },
     {
       "type": "commit",
       "commitId": "C:1",
-      "createdAt": "2026-02-06T00:00:03.000Z",
+      "createdAt": "2026-02-06T00:00:03Z",
       "author": "A:system"
     }
   ],
@@ -45,54 +25,26 @@
     "lintOk": true,
     "graph": {
       "nodes": [
-        {
-          "id": "N:1",
-          "kind": "Decision",
-          "status": "Active",
-          "createdAt": "2026-02-06T00:00:00.000Z",
-          "author": "A:system"
-        },
-        {
-          "id": "N:2",
-          "kind": "Decision",
-          "status": "Active",
-          "createdAt": "2026-02-06T00:00:01.000Z",
-          "author": "A:system"
-        }
+        { "id": "N:1", "kind": "Decision", "createdAt": "2026-02-06T00:00:00Z", "author": "A:system" },
+        { "id": "N:2", "kind": "Decision", "createdAt": "2026-02-06T00:00:01Z", "author": "A:system" }
       ],
       "edges": [
-        {
-          "id": "E:1",
-          "type": "supports",
-          "from": "N:1",
-          "to": "N:2",
-          "status": "Active",
-          "createdAt": "2026-02-06T00:00:02.000Z",
-          "author": "A:system"
-        }
+        { "id": "E:1", "type": "supports", "from": "N:1", "to": "N:2", "status": "Active" }
       ],
-      "commits": [
-        {
-          "commitId": "C:1",
-          "createdAt": "2026-02-06T00:00:03.000Z",
-          "author": "A:system"
-        }
-      ]
+      "commits": [{ "commitId": "C:1" }]
     },
     "replay": [
       {
         "asOfCommitId": "C:1",
         "snapshot": {
           "nodes": [
-            { "id": "N:1", "kind": "Decision", "status": "Active" },
-            { "id": "N:2", "kind": "Decision", "status": "Active" }
+            { "id": "N:1", "kind": "Decision", "effectiveStatus": "Active" },
+            { "id": "N:2", "kind": "Decision", "effectiveStatus": "Active" }
           ],
           "edges": [
             { "id": "E:1", "type": "supports", "from": "N:1", "to": "N:2", "status": "Active" }
           ],
-          "commits": [
-            { "commitId": "C:1" }
-          ]
+          "commits": [{ "commitId": "C:1" }]
         }
       }
     ]

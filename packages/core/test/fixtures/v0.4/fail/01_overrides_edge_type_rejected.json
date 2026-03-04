@@ -1,0 +1,41 @@
+{
+  "name": "01_overrides_edge_type_rejected",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:b",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:ov",
+        "type": "overrides",
+        "from": "N:a",
+        "to": "N:b",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 2 },
+    "violations": [
+      { "code": "INVALID_EDGE_TYPE", "severity": "ERROR", "path": "op.edge.type" }
+    ]
+  }
+}

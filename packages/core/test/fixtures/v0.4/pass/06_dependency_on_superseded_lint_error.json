@@ -1,0 +1,63 @@
+{
+  "name": "06_dependency_on_superseded_lint_error",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:old",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:new",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:dependent",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:sup",
+        "type": "supersedes",
+        "from": "N:new",
+        "to": "N:old",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:03:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:dep",
+        "type": "depends_on",
+        "from": "N:dependent",
+        "to": "N:old",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:04:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": false,
+    "lintViolations": [
+      { "code": "DEPENDENCY_ON_SUPERSEDED", "severity": "ERROR" }
+    ]
+  }
+}

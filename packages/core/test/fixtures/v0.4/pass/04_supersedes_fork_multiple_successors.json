@@ -1,0 +1,95 @@
+{
+  "name": "04_supersedes_fork_multiple_successors",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:original",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:fork-a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:fork-b",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:bob"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:sup-a",
+        "type": "supersedes",
+        "from": "N:fork-a",
+        "to": "N:original",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:03:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:sup-b",
+        "type": "supersedes",
+        "from": "N:fork-b",
+        "to": "N:original",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:04:00.000Z",
+        "author": "A:bob"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-01-01T00:05:00.000Z",
+      "author": "A:alice"
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        { "id": "N:fork-a", "kind": "Decision", "createdAt": "2026-01-01T00:01:00.000Z", "author": "A:alice" },
+        { "id": "N:fork-b", "kind": "Decision", "createdAt": "2026-01-01T00:02:00.000Z", "author": "A:bob" },
+        { "id": "N:original", "kind": "Decision", "createdAt": "2026-01-01T00:00:00.000Z", "author": "A:alice" }
+      ],
+      "edges": [
+        { "id": "E:sup-a", "type": "supersedes", "from": "N:fork-a", "to": "N:original", "status": "Active" },
+        { "id": "E:sup-b", "type": "supersedes", "from": "N:fork-b", "to": "N:original", "status": "Active" }
+      ],
+      "commits": [{ "commitId": "C:1" }]
+    },
+    "replay": [
+      {
+        "asOfCommitId": "C:1",
+        "snapshot": {
+          "nodes": [
+            { "id": "N:fork-a", "kind": "Decision", "effectiveStatus": "Active" },
+            { "id": "N:fork-b", "kind": "Decision", "effectiveStatus": "Active" },
+            { "id": "N:original", "kind": "Decision", "effectiveStatus": "Superseded" }
+          ],
+          "edges": [
+            { "id": "E:sup-a", "type": "supersedes", "from": "N:fork-a", "to": "N:original", "status": "Active" },
+            { "id": "E:sup-b", "type": "supersedes", "from": "N:fork-b", "to": "N:original", "status": "Active" }
+          ],
+          "commits": [{ "commitId": "C:1" }]
+        }
+      }
+    ]
+  }
+}

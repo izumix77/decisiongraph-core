@@ -1,0 +1,32 @@
+{
+  "name": "02_self_loop_rejected",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:self",
+        "type": "depends_on",
+        "from": "N:a",
+        "to": "N:a",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 1 },
+    "violations": [
+      { "code": "SELF_LOOP", "severity": "ERROR", "path": "op.edge.from" }
+    ]
+  }
+}

@@ -6,7 +6,6 @@
       "node": {
         "id": "N:1",
         "kind": "Decision",
-        "status": "Active",
         "createdAt": "2026-02-06T00:00:00.000Z",
         "author": "A:system"
       }
@@ -23,22 +22,10 @@
     "lintOk": true,
     "graph": {
       "nodes": [
-        {
-          "id": "N:1",
-          "kind": "Decision",
-          "status": "Active",
-          "createdAt": "2026-02-06T00:00:00.000Z",
-          "author": "A:system"
-        }
+        { "id": "N:1", "kind": "Decision", "createdAt": "2026-02-06T00:00:00.000Z", "author": "A:system" }
       ],
       "edges": [],
-      "commits": [
-        {
-          "commitId": "C:1",
-          "createdAt": "2026-02-06T00:00:01.000Z",
-          "author": "A:system"
-        }
-      ]
+      "commits": [{ "commitId": "C:1" }]
     }
   }
 }

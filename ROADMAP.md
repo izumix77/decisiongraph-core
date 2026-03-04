@@ -86,11 +86,43 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 - Formalize policy compatibility and version boundaries (Core / Schema / IO)
 - Ensure extension packages cannot weaken constitutional guarantees
 - The Core defines structure, responsibility, and replayability — not meaning
-- **Node status transition operation** — explicit `Active → Superseded` transition
-  - Currently there is no operation to change a committed node's status
-  - Required to represent "a decision that becomes invalid over time"
-  - Key use case: ADR supersession in time-series scenarios
-  - Enabling this will unlock `supersede_node` as a first-class kernel operation
+
+---
+
+## Phase 3c — Topology-Derived State Model
+
+**Status:** ✅ Completed
+**Authority:** Constitution v0.4 RC
+
+### Background
+
+v0.3 stored `Superseded` as a Node attribute — a category error.
+A Node is a proposition. A proposition cannot contain its own negation or replacement state.
+Supersession is a relation between Nodes, not an attribute of any single Node.
+
+### Achieved
+
+- Constitution v0.4 RC finalized
+- `Node.status` removed — Nodes carry no lifecycle state
+- `effectiveStatus(store, nodeId)` introduced as pure topology derivation
+- `Deprecated` and `overrides` removed from Core vocabulary
+- `EdgeStatus` simplified to binary: `Active | Superseded`
+- `SELF_LOOP` detection added (`from === to` → ERROR)
+- `supersedes` cycles detected as `CIRCULAR_DEPENDENCY`
+- `Policy` interface updated to GraphStore-based signatures
+- `replay` / `replayAt` → `GraphLog[]` → `GraphStore` (store-wide boundary)
+- `diffStore()` added
+- `supersede_edge` atomicity formalized and proven in test suite
+- Golden fixtures v0.4 (pass: 7, fail: 6)
+- Migration Guide v0.3 → v0.4
+- JSON Schema v0.4 (typed discriminated union per op, `Node.status` prohibited)
+- README updated with derived state model and replay ordering contract
+
+### Preserved Invariants
+
+- All v0.3 constitutional guarantees maintained (authorship, immutability, determinism)
+- Single-graph GraphStore remains fully valid
+- Node / Edge / Commit schemas structurally compatible (Node.status removal only breaking field change)
 
 ---
 
@@ -100,16 +132,14 @@ Guarantees: reproducible builds, deterministic deps, CI/local parity.
 
 - CLI refinement (without abstraction leakage)
   - ✅ `traverse <directory>` — tree view of violations with dependency chains
-  - ✅ `DEPENDENCY_ON_SUPERSEDED` / `DEPENDENCY_ON_DEPRECATED` detection (Constitution Section 6)
+  - ✅ `DEPENDENCY_ON_SUPERSEDED` detection (Constitution Section 6)
   - ✅ Cross-graph violation rendering with `payload`-based chain tracing
-  - ✅ `--strict` flag — treat WARN as ERROR
-  - ✅ Published to npm as `@decisiongraph/cli@0.1.2`
 - Visualization / inspection tools
-  - `graph <directory>` — visualize the full dependency graph (not just violations)
-  - Show healthy dependency chains, not only errors
 - Integration examples (ClaimAtom, TraceOS)
 
 All tooling must remain outside the Core.
+
+---
 
 ---
 

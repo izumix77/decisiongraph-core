@@ -1,0 +1,20 @@
+{
+  "name": "03_author_required_node",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": ""
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 0 },
+    "violations": [
+      { "code": "AUTHOR_REQUIRED", "severity": "ERROR", "path": "op.node.author" }
+    ]
+  }
+}

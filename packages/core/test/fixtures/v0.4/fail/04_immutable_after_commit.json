@@ -1,0 +1,35 @@
+{
+  "name": "04_immutable_after_commit",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:a",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-01-01T00:01:00.000Z",
+      "author": "A:alice"
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:b",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    }
+  ],
+  "expect": {
+    "final": { "ok": false, "rejectAt": 2 },
+    "violations": [
+      { "code": "IMMUTABLE_AFTER_COMMIT", "severity": "ERROR", "path": "graph.commits" }
+    ]
+  }
+}

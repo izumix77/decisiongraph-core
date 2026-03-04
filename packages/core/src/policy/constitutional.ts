@@ -1,3 +1,13 @@
+// Constitution v0.4
+// Key changes from v0.3:
+// - Node.status removed; effectiveStatus() derives state from topology
+// - isValidNodeStatus() removed
+// - isValidEdgeStatus(): "Deprecated" removed → binary Active | Superseded
+// - isValidEdgeType(): "overrides" removed
+// - DEPENDENCY_ON_SUPERSEDED: now uses effectiveStatus(), not node.status
+// - DEPENDENCY_ON_DEPRECATED: removed entirely
+// - validateStore Node loop: no status check
+
 import type { Policy } from "./policy.js";
 import type { Graph, GraphStore, Operation, Violation } from "../domain/types.js";
 import type { GraphId } from "../domain/ids.js";
@@ -16,10 +26,13 @@ const v = (
   ...(payload !== undefined ? { payload } : {}),
 });
 
-const isValidNodeStatus = (x: unknown) => x === "Active" || x === "Superseded" || x === "Deprecated";
-const isValidEdgeStatus = (x: unknown) => x === "Active" || x === "Superseded" || x === "Deprecated";
-const isValidEdgeType   = (x: unknown) =>
-  x === "depends_on" || x === "supports" || x === "refutes" || x === "overrides" || x === "supersedes";
+// Edge status is axiomatic binary ground (Constitution v0.4, Section 5.2)
+const isValidEdgeStatus = (x: unknown) => x === "Active" || x === "Superseded";
+
+// "overrides" removed — Core does not interpret deprecation semantics (Constitution v0.4, Section 2.4)
+const isValidEdgeType = (x: unknown) =>
+  x === "depends_on" || x === "supports" || x === "refutes" || x === "supersedes";
+
 const isActive = (x: unknown) => x === "Active";
 
 // ---- helpers ----
@@ -32,7 +45,6 @@ function resolveEdgeInStore(store: GraphStore, edgeId: string): Graph | undefine
   return Object.values(store.graphs).find((g) => edgeId in g.edges);
 }
 
-// NodeId MUST be globally unique within GraphStore (Constitution v0.3).
 function collectAllNodeIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
@@ -41,7 +53,6 @@ function collectAllNodeIds(store: GraphStore): Set<string> {
   return ids;
 }
 
-// EdgeId MUST be globally unique within GraphStore (Constitution v0.3).
 function collectAllEdgeIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
@@ -50,10 +61,6 @@ function collectAllEdgeIds(store: GraphStore): Set<string> {
   return ids;
 }
 
-// commitId MUST be globally unique within GraphStore (Constitution v0.3).
-// GraphStore = one world; commitId = a point in shared time.
-// Graph-local commitId uniqueness is intentionally NOT supported in v0.x.
-// See: docs/constitution/v0.3 — Commit Scope
 function collectAllCommitIds(store: GraphStore): Set<string> {
   const ids = new Set<string>();
   for (const g of Object.values(store.graphs)) {
@@ -62,15 +69,29 @@ function collectAllCommitIds(store: GraphStore): Set<string> {
   return ids;
 }
 
-function findNodeInStore(store: GraphStore, nodeId: string) {
+// effectiveStatus derivation — Constitution v0.4, Section 7.1
+//
+// "Superseded" if and only if there exists an Active "supersedes" edge whose `to` = nodeId.
+// Cross-graph edges are included. Only Active edges participate.
+// No stored Node attribute is read.
+export function effectiveStatus(store: GraphStore, nodeId: string): "Active" | "Superseded" {
   for (const g of Object.values(store.graphs)) {
-    const node = g.nodes[nodeId];
-    if (node) return node;
+    for (const e of Object.values(g.edges)) {
+      if (
+        e.type === "supersedes" &&
+        e.status === "Active" &&
+        String(e.to) === nodeId
+      ) {
+        return "Superseded";
+      }
+    }
   }
-  return null;
+  return "Active";
 }
 
-// Circular dependency detection across graphs using DFS
+// Circular dependency detection across graphs using DFS.
+// All Active edges participate — including "supersedes".
+// A supersession cycle (A supersedes B, B supersedes A) is a CIRCULAR_DEPENDENCY error.
 function detectCycle(store: GraphStore): string | null {
   const adj = new Map<string, string[]>();
   for (const g of Object.values(store.graphs)) {
@@ -132,6 +153,7 @@ export class ConstitutionalPolicy implements Policy {
     }
 
     // ---- add_node
+    // Node has no status field in v0.4 — no status validation here
     if (op.type === "add_node") {
       if (!op.node.author)
         violations.push(v("AUTHOR_REQUIRED", "author is required", "op.node.author"));
@@ -139,8 +161,6 @@ export class ConstitutionalPolicy implements Policy {
         violations.push(v("NODE_ID_REQUIRED", "node id is required", "op.node.id"));
       if (allNodeIds.has(String(op.node.id)))
         violations.push(v("NODE_ID_DUP", "node id already exists in GraphStore", "op.node.id"));
-      if (!isValidNodeStatus(op.node.status))
-        violations.push(v("INVALID_NODE_STATUS", "invalid node status", "op.node.status"));
     }
 
     // ---- add_edge
@@ -155,6 +175,10 @@ export class ConstitutionalPolicy implements Policy {
         violations.push(v("INVALID_EDGE_TYPE", "invalid edge type", "op.edge.type"));
       if (!isValidEdgeStatus(op.edge.status))
         violations.push(v("INVALID_EDGE_STATUS", "invalid edge status", "op.edge.status"));
+
+      // Self-loop — from === to is always invalid (Constitution v0.4, Section 6)
+      if (String(op.edge.from) === String(op.edge.to))
+        violations.push(v("SELF_LOOP", "edge from and to must differ", "op.edge.from"));
 
       // Cross-graph edge resolution
       const fromExists = resolveNodeInStore(store, String(op.edge.from));
@@ -228,6 +252,7 @@ export class ConstitutionalPolicy implements Policy {
 
     for (const [gid, graph] of Object.entries(store.graphs)) {
       // ---- Nodes
+      // No status check — Node carries no stored status in v0.4
       for (const [id, n] of Object.entries(graph.nodes)) {
         if (!n.author)
           violations.push(v("AUTHOR_REQUIRED", "author is required", `graphs.${gid}.nodes.${id}.author`));
@@ -239,8 +264,6 @@ export class ConstitutionalPolicy implements Policy {
         } else {
           seenNodeIds.add(nodeId);
         }
-        if (!isValidNodeStatus(n.status))
-          violations.push(v("INVALID_NODE_STATUS", "invalid node status", `graphs.${gid}.nodes.${id}.status`));
       }
 
       // ---- Edges
@@ -260,7 +283,11 @@ export class ConstitutionalPolicy implements Policy {
         if (!isValidEdgeStatus(e.status))
           violations.push(v("INVALID_EDGE_STATUS", "invalid edge status", `graphs.${gid}.edges.${id}.status`));
 
-        // Cross-graph edge resolution + Superseded check（重複防止のため else if で連結）
+        // Self-loop check (Constitution v0.4, Section 6)
+        if (String(e.from) === String(e.to))
+          violations.push(v("SELF_LOOP", "edge from and to must differ", `graphs.${gid}.edges.${id}.from`));
+
+        // Cross-graph edge resolution
         const fromResolved = resolveNodeInStore(store, String(e.from));
         const toResolved   = resolveNodeInStore(store, String(e.to));
 
@@ -283,25 +310,19 @@ export class ConstitutionalPolicy implements Policy {
             { fromNodeId: String(e.from) }
           ));
         } else if (e.status === "Active" && e.type === "depends_on") {
-          // toが解決できた場合のみSupersededチェック（EDGE_NOT_RESOLVEDとの重複防止）
-          const toNode = findNodeInStore(store, String(e.to));
-          if (toNode && toNode.status === "Superseded") {
-              violations.push(v(
-                "DEPENDENCY_ON_SUPERSEDED",
-                `depends_on target '${e.to}' is Superseded`,
-                `graphs.${gid}.edges.${id}.to`,
-                "ERROR",
-                { fromNodeId: String(e.from) }
-              ));
-            } else if (toNode && toNode.status === "Deprecated") {
-              violations.push(v(
-                "DEPENDENCY_ON_DEPRECATED",
-                `depends_on target '${e.to}' is Deprecated`,
-                `graphs.${gid}.edges.${id}.to`,
-                "WARN",
-                { fromNodeId: String(e.from) }
-              ));
-            }
+          // DEPENDENCY_ON_SUPERSEDED: derived from topology, not from stored node.status
+          // Only "depends_on" is checked — supports/refutes are historical relations (Constitution v0.4, Section 6)
+          const status = effectiveStatus(store, String(e.to));
+          if (status === "Superseded") {
+            violations.push(v(
+              "DEPENDENCY_ON_SUPERSEDED",
+              `depends_on target '${e.to}' is Superseded (derived from topology)`,
+              `graphs.${gid}.edges.${id}.to`,
+              "ERROR",
+              { targetNodeId: String(e.to), fromNodeId: String(e.from) }
+            ));
+          }
+          // DEPENDENCY_ON_DEPRECATED: removed in v0.4 — Deprecated is not a Core concept
         }
       }
 
@@ -316,7 +337,8 @@ export class ConstitutionalPolicy implements Policy {
       }
     }
 
-    // Circular dependency detection
+    // Circular dependency detection — all Active edges including "supersedes"
+    // A supersession cycle (A supersedes B, B supersedes A) is caught here as CIRCULAR_DEPENDENCY
     const cycle = detectCycle(store);
     if (cycle) {
       violations.push(v("CIRCULAR_DEPENDENCY", `circular dependency detected: ${cycle}`, "store.edges"));

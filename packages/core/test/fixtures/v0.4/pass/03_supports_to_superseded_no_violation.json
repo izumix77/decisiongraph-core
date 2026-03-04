@@ -1,0 +1,78 @@
+{
+  "name": "03_supports_to_superseded_no_violation",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:old",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:new",
+        "kind": "Decision",
+        "createdAt": "2026-01-01T00:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:evidence",
+        "kind": "Evidence",
+        "createdAt": "2026-01-01T00:02:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:sup",
+        "type": "supersedes",
+        "from": "N:new",
+        "to": "N:old",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:03:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:spt",
+        "type": "supports",
+        "from": "N:evidence",
+        "to": "N:old",
+        "status": "Active",
+        "createdAt": "2026-01-01T00:04:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "commit",
+      "commitId": "C:1",
+      "createdAt": "2026-01-01T00:05:00.000Z",
+      "author": "A:alice"
+    }
+  ],
+  "expect": {
+    "final": { "ok": true },
+    "lintOk": true,
+    "graph": {
+      "nodes": [
+        { "id": "N:evidence", "kind": "Evidence", "createdAt": "2026-01-01T00:02:00.000Z", "author": "A:alice" },
+        { "id": "N:new", "kind": "Decision", "createdAt": "2026-01-01T00:01:00.000Z", "author": "A:alice" },
+        { "id": "N:old", "kind": "Decision", "createdAt": "2026-01-01T00:00:00.000Z", "author": "A:alice" }
+      ],
+      "edges": [
+        { "id": "E:spt", "type": "supports", "from": "N:evidence", "to": "N:old", "status": "Active" },
+        { "id": "E:sup", "type": "supersedes", "from": "N:new", "to": "N:old", "status": "Active" }
+      ],
+      "commits": [{ "commitId": "C:1" }]
+    }
+  }
+}

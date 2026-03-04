@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.4.3 (2026-03-05)
+
+### Breaking Changes
+- `Node.status` removed — supersession is now topology-derived via `effectiveStatus(store, nodeId)`
+- `NodeStatus` type removed from public API
+- `EdgeStatus` simplified to binary: `"Active" | "Superseded"` (`"Deprecated"` removed)
+- `EdgeType` removes `"overrides"` — use `"supersedes"` for replacement relationships
+- `supersede_node` op removed — supersession is expressed via `supersedes` edges only
+- `DEPENDENCY_ON_DEPRECATED` violation removed (Deprecated status on nodes removed)
+- All kernel functions now require `GraphStore` + `GraphId` (no single-Graph overloads)
+
+### Added
+- `effectiveStatus(store, nodeId): "Active" | "Superseded"` — topology-derived, sole authority for node supersession
+- `SELF_LOOP` violation code — edge from a node to itself is rejected
+- `supersede_edge` atomicity guarantee — old edge marked Superseded and new edge added in single operation
+- `ResolvedNode` / `ResolvedEdge` types exported from `@decisiongraph/core`
+- `emptyGraph(graphId)` helper for single-graph store initialization
+- Golden fixtures C01–C20 covering all v0.4 constitutional invariants
+- `io-json/decode.ts` updated to v0.4 (Node.status removed, supersede_node removed)
+
+### Fixed
+- `fixtures.test.ts`: store initialized with `emptyGraph(graphId)` to ensure graph exists before ops
+- All v0.2 golden fixtures updated to v0.4 format (node.status removed, edge.status added)
+- `core.test.ts`: node.status removed from all test data
+
+### Packages
+- `@decisiongraph/core@0.4.1` (internal — no version bump for RC)
+- `@decisiongraph/io-json@0.1.1` (decode.ts updated)
+
+---
+
 ## v0.4.2 (2026-03-02)
 
 ### Fixed

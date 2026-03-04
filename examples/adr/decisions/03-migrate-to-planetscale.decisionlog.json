@@ -1,0 +1,47 @@
+{
+  "version": "0.3",
+  "graphId": "G:infra-v2",
+  "ops": [
+    {
+      "type": "add_node",
+      "node": {
+        "id": "N:adr-003",
+        "kind": "ADR",
+        "status": "Active",
+        "createdAt": "2026-02-15T10:00:00.000Z",
+        "author": "A:alice",
+        "payload": {
+          "title": "Migrate primary database from PostgreSQL to PlanetScale",
+          "statement": "We migrate to PlanetScale (MySQL-compatible) for horizontal scalability and branching workflows.",
+          "context": "Traffic growth has exceeded what a single PostgreSQL instance can handle cost-effectively.",
+          "consequences": "ADR-001 is superseded. All services must migrate to MySQL-compatible drivers. ADR-002 (session auth) must be revisited."
+        }
+      }
+    },
+    {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:adr-003-supersedes-adr-001",
+        "type": "supersedes",
+        "from": "N:adr-003",
+        "to": "N:adr-001",
+        "status": "Active",
+        "createdAt": "2026-02-15T10:01:00.000Z",
+        "author": "A:alice"
+      }
+    },
+    {
+      "type": "supersede_node",
+      "nodeId": "N:adr-001",
+      "supersededAt": "2026-02-15T10:02:00.000Z",
+      "author": "A:alice",
+      "supersedingNodeId": "N:adr-003"
+    },
+    {
+      "type": "commit",
+      "commitId": "C:infra-v2-1",
+      "createdAt": "2026-02-15T10:05:00.000Z",
+      "author": "A:alice"
+    }
+  ]
+}
