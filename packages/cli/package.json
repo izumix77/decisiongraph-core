@@ -1,6 +1,6 @@
 {
   "name": "@decisiongraph/cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "bin": {
     "decisiongraph": "bin/decisiongraph"
@@ -12,9 +12,9 @@
     "clean": "tsc -b tsconfig.build.json --clean"
   },
   "dependencies": {
-    "@decisiongraph/core": "0.4.1",
-    "@decisiongraph/schema": "0.1.0",
-    "@decisiongraph/io-json": "0.1.1"
+    "@decisiongraph/core": "workspace:*",
+    "@decisiongraph/schema": "workspace:*",
+    "@decisiongraph/io-json": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.0.0",
