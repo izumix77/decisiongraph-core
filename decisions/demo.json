@@ -1,5 +1,6 @@
 {
-  "version": "0.2",
+  "version": "0.4",
+  "graphId": "G:demo",
   "ops": [
     {
       "type": "add_node",
