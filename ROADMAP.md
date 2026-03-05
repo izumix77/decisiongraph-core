@@ -132,6 +132,7 @@ Supersession is a relationship between nodes, not a property of a node.
   - ✅ Cross-graph violation rendering with `payload`-based chain tracing
   - ✅ `DEPENDENCY_ON_DEPRECATED` detection (Constitution Section 6, WARN)
   - ✅ `--strict` flag — treat WARN as ERROR
+  - ✅ `cmdLint` / `cmdLintDir` updated for v0.4 GraphStore — graph initialized via `emptyGraph(graphId)` before ops
 - Visualization / inspection tools
 - Integration examples (ClaimAtom, TraceOS)
 

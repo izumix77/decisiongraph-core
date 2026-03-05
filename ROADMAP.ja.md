@@ -132,6 +132,7 @@ Supersession はノードの属性ではなく、ノード間の関係です。
   - ✅ Cross-graph 違反のレンダリング（`payload` ベースのチェーントレース）
   - ✅ `DEPENDENCY_ON_DEPRECATED` 検出（Constitution Section 6、WARN）
   - ✅ `--strict` フラグ — WARN を ERROR として扱う
+  - ✅ `cmdLint` / `cmdLintDir` v0.4 GraphStore 対応 — `emptyGraph(graphId)` による graph 初期化
 - 可視化 / 解析ツール
 - 統合例（ClaimAtom, TraceOS）
 

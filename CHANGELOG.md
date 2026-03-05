@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.4.4 (2026-03-05)
+
+### Fixed
+- `@decisiongraph/cli`: `cmdLint` now uses `emptyGraph(graphId)` instead of `emptyStore()` — graph must exist before ops are applied
+- `@decisiongraph/cli`: `cmdLintDir` now initializes each graph in store before `applyBatch`
+- `@decisiongraph/schema`: v0.4 JSON Schema added (`schemas/v0.4/decision.schema.json`)
+- `@decisiongraph/io-json`: `version.ts` updated — `"0.4"` added to `SUPPORTED_VERSIONS`, `CURRENT_SCHEMA_VERSION` set to `"0.4"`
+- `decisions/demo.json` updated to v0.4 format (`version: "0.4"`, `graphId` added)
+- CI `decision-lint.yml`: `pnpm install` (was `pnpm -w install`) for full workspace resolution
+- All workspace dependencies use `workspace:*` for consistent turbo build ordering in CI
+
+### Packages
+- `@decisiongraph/core@0.4.2`
+- `@decisiongraph/schema@0.2.0`
+- `@decisiongraph/io-json@0.2.0`
+- `@decisiongraph/cli@0.1.3`
+
+---
+
 ## v0.4.3 (2026-03-05)
 
 ### Breaking Changes
@@ -30,8 +49,8 @@ All notable changes to this project will be documented in this file.
 - `core.test.ts`: node.status removed from all test data
 
 ### Packages
-- `@decisiongraph/core@0.4.1` (internal — no version bump for RC)
-- `@decisiongraph/io-json@0.2.0` (decode.ts updated)
+- `@decisiongraph/core@0.4.2`
+- `@decisiongraph/io-json@0.2.0`
 
 ---
 

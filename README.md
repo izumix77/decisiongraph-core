@@ -226,8 +226,8 @@ The kernel remains neutral and reusable across domains.
 
 ## Status
 
-- **Current version:** v0.4 RC (core@0.4.1, cli@0.1.2, io-json@0.2.0)
-- **Stability:** Active development
+- **Current version:** v0.4 (core@0.4.2, schema@0.2.0, io-json@0.2.0, cli@0.1.3)
+- **Stability:** Stable RC
 - **Normative authority:** Constitution v0.4
 
 ---
