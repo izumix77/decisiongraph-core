@@ -1,6 +1,6 @@
 {
   "name": "@decisiongraph/io-json",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,8 +15,7 @@
     "clean": "tsc -b tsconfig.build.json --clean"
   },
   "dependencies": {
-    "@decisiongraph/core": "workspace:*",
-    "@decisiongraph/schema": "workspace:*"
+  "@decisiongraph/core": "^0.4.2",
+  "@decisiongraph/schema": "^0.2.1"
   }
 }
-

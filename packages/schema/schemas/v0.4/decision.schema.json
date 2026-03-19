@@ -1,22 +1,119 @@
 {
-  "$id": "https://decisiongraph.dev/schemas/decisionlog.v0.4.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://decisiongraph.dev/schemas/v0.4/decisionlog.schema.json",
+  "title": "DecisionGraph Decision Log v0.4",
+  "description": "Transport/replay format: a deterministic sequence of operations belonging to a single Graph within a GraphStore.",
   "type": "object",
   "required": ["version", "graphId", "ops"],
+  "additionalProperties": false,
   "properties": {
-    "version": { "const": "0.4" },
-    "graphId": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "const": "0.4"
+    },
+    "graphId": {
+      "type": "string",
+      "minLength": 1
+    },
     "ops": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["type"],
-        "properties": {
-          "type": { "type": "string" }
-        },
-        "additionalProperties": true
-      }
+      "items": { "$ref": "#/$defs/Operation" }
     }
   },
-  "additionalProperties": false
+  "$defs": {
+    "IsoTimestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "NodeId":   { "type": "string", "minLength": 1 },
+    "EdgeId":   { "type": "string", "minLength": 1 },
+    "CommitId": { "type": "string", "minLength": 1 },
+    "AuthorId": { "type": "string", "minLength": 1 },
+    "EdgeType": {
+      "type": "string",
+      "enum": ["depends_on", "supports", "refutes", "supersedes"]
+    },
+    "EdgeStatus": {
+      "type": "string",
+      "enum": ["Active", "Superseded"]
+    },
+    "Node": {
+      "type": "object",
+      "required": ["id", "kind", "createdAt", "author"],
+      "additionalProperties": true,
+      "properties": {
+        "id":        { "$ref": "#/$defs/NodeId" },
+        "kind":      { "type": "string", "minLength": 1 },
+        "createdAt": { "$ref": "#/$defs/IsoTimestamp" },
+        "author":    { "$ref": "#/$defs/AuthorId" },
+        "payload":   {},
+        "status": {
+          "not": {},
+          "description": "Node.status was removed in v0.4. Supersession is expressed via a 'supersedes' edge."
+        }
+      }
+    },
+    "Edge": {
+      "type": "object",
+      "required": ["id", "type", "from", "to", "status", "createdAt", "author"],
+      "additionalProperties": true,
+      "properties": {
+        "id":        { "$ref": "#/$defs/EdgeId" },
+        "type":      { "$ref": "#/$defs/EdgeType" },
+        "from":      { "$ref": "#/$defs/NodeId" },
+        "to":        { "$ref": "#/$defs/NodeId" },
+        "status":    { "$ref": "#/$defs/EdgeStatus" },
+        "createdAt": { "$ref": "#/$defs/IsoTimestamp" },
+        "author":    { "$ref": "#/$defs/AuthorId" },
+        "payload":   {}
+      }
+    },
+    "AddNodeOp": {
+      "type": "object",
+      "required": ["type", "node"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "const": "add_node" },
+        "node": { "$ref": "#/$defs/Node" }
+      }
+    },
+    "AddEdgeOp": {
+      "type": "object",
+      "required": ["type", "edge"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "const": "add_edge" },
+        "edge": { "$ref": "#/$defs/Edge" }
+      }
+    },
+    "SupersedeEdgeOp": {
+      "type": "object",
+      "required": ["type", "oldEdgeId", "newEdge"],
+      "additionalProperties": false,
+      "properties": {
+        "type":      { "type": "string", "const": "supersede_edge" },
+        "oldEdgeId": { "$ref": "#/$defs/EdgeId" },
+        "newEdge":   { "$ref": "#/$defs/Edge" }
+      }
+    },
+    "CommitOp": {
+      "type": "object",
+      "required": ["type", "commitId", "createdAt", "author"],
+      "additionalProperties": false,
+      "properties": {
+        "type":      { "type": "string", "const": "commit" },
+        "commitId":  { "$ref": "#/$defs/CommitId" },
+        "createdAt": { "$ref": "#/$defs/IsoTimestamp" },
+        "author":    { "$ref": "#/$defs/AuthorId" }
+      }
+    },
+    "Operation": {
+      "oneOf": [
+        { "$ref": "#/$defs/AddNodeOp" },
+        { "$ref": "#/$defs/AddEdgeOp" },
+        { "$ref": "#/$defs/SupersedeEdgeOp" },
+        { "$ref": "#/$defs/CommitOp" }
+      ]
+    }
+  }
 }

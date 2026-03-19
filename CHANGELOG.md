@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.4.4 (2026-03-20)
+
+### Fixed
+- `@decisiongraph/schema`: `files` field added to `package.json` — `schemas/` directory was missing from npm published package
+- `@decisiongraph/schema`: v0.4 schema upgraded to full implementation — typed discriminated union (`AddNodeOp` / `AddEdgeOp` / `SupersedeEdgeOp` / `CommitOp`) and `Node.status` prohibition (`"not": {}`) now enforced at schema layer
+- `@decisiongraph/io-json` / `@decisiongraph/cli`: `workspace:*` dependencies were not resolved on publish — replaced with explicit version ranges
+
+### Packages
+- `@decisiongraph/schema@0.2.2`
+- `@decisiongraph/io-json@0.2.2`
+- `@decisiongraph/cli@0.1.5`
+
+---
+
 ## v0.4.4 (2026-03-05)
 
 ### Fixed

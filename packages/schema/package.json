@@ -1,7 +1,11 @@
 {
   "name": "@decisiongraph/schema",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "type": "module",
+  "files": [
+    "dist",
+    "schemas"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -19,4 +23,3 @@
     "ajv-formats": "^2.0.0"
   }
 }
-
