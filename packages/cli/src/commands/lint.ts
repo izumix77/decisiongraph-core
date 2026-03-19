@@ -122,7 +122,10 @@ export function cmdLintDir(dir: string, options?: { strict?: boolean }): DirLint
   }
 
   // cross-graph lint
-  const lr = lintStore(store, policy);
+  const lr = lintStore(store, {
+  validateOperation: () => [],
+  validateStore: () => [],
+});
   if (!lr.ok) {
     results.push({
       file: "<store>",
@@ -135,4 +138,3 @@ export function cmdLintDir(dir: string, options?: { strict?: boolean }): DirLint
 
   return { results, store };
 }
-

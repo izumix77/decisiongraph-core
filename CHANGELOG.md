@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## v0.4.5 (2026-03-20)
+
+### Fixed
+- `@decisiongraph/cli`: duplicate violations in `lint <directory>` and `traverse` — `lintStore` was called with `ConstitutionalPolicy` as both internal and caller policy, causing store-level violations to appear twice
+
+### Packages
+- `@decisiongraph/cli@0.1.6`
+
+---
+
 ## v0.4.4 (2026-03-20)
 
 ### Fixed
