@@ -2,35 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
----
-
-## v0.4.5 (2026-03-20)
+## [0.4.5] - 2026-03-20
 
 ### Fixed
 - `@decisiongraph/cli`: duplicate violations in `lint <directory>` and `traverse` — `lintStore` was called with `ConstitutionalPolicy` as both internal and caller policy, causing store-level violations to appear twice
 
-### Packages
-- `@decisiongraph/cli@0.1.6`
+### Changed
+- Packages updated:
+  - `@decisiongraph/cli@0.1.6`
 
 ---
 
-## v0.4.4 (2026-03-20)
+## [0.4.4] - 2026-03-20
 
 ### Fixed
 - `@decisiongraph/schema`: `files` field added to `package.json` — `schemas/` directory was missing from npm published package
 - `@decisiongraph/schema`: v0.4 schema upgraded to full implementation — typed discriminated union (`AddNodeOp` / `AddEdgeOp` / `SupersedeEdgeOp` / `CommitOp`) and `Node.status` prohibition (`"not": {}`) now enforced at schema layer
 - `@decisiongraph/io-json` / `@decisiongraph/cli`: `workspace:*` dependencies were not resolved on publish — replaced with explicit version ranges
-
-### Packages
-- `@decisiongraph/schema@0.2.2`
-- `@decisiongraph/io-json@0.2.2`
-- `@decisiongraph/cli@0.1.5`
-
----
-
-## v0.4.4 (2026-03-05)
-
-### Fixed
 - `@decisiongraph/cli`: `cmdLint` now uses `emptyGraph(graphId)` instead of `emptyStore()` — graph must exist before ops are applied
 - `@decisiongraph/cli`: `cmdLintDir` now initializes each graph in store before `applyBatch`
 - `@decisiongraph/schema`: v0.4 JSON Schema added (`schemas/v0.4/decision.schema.json`)
@@ -39,24 +27,28 @@ All notable changes to this project will be documented in this file.
 - CI `decision-lint.yml`: `pnpm install` (was `pnpm -w install`) for full workspace resolution
 - All workspace dependencies use `workspace:*` for consistent turbo build ordering in CI
 
-### Packages
-- `@decisiongraph/core@0.4.2`
-- `@decisiongraph/schema@0.2.0`
-- `@decisiongraph/io-json@0.2.0`
-- `@decisiongraph/cli@0.1.3`
+### Changed
+- Packages updated:
+  - `@decisiongraph/schema@0.2.2`
+  - `@decisiongraph/io-json@0.2.2`
+  - `@decisiongraph/cli@0.1.5`
+  - `@decisiongraph/core@0.4.2`
+  - `@decisiongraph/schema@0.2.0`
+  - `@decisiongraph/io-json@0.2.0`
+  - `@decisiongraph/cli@0.1.3`
 
 ---
 
-## v0.4.3 (2026-03-05)
+## [0.4.3] - 2026-03-05
 
-### Breaking Changes
-- `Node.status` removed — supersession is now topology-derived via `effectiveStatus(store, nodeId)`
-- `NodeStatus` type removed from public API
-- `EdgeStatus` simplified to binary: `"Active" | "Superseded"` (`"Deprecated"` removed)
-- `EdgeType` removes `"overrides"` — use `"supersedes"` for replacement relationships
-- `supersede_node` op removed — supersession is expressed via `supersedes` edges only
-- `DEPENDENCY_ON_DEPRECATED` violation removed (Deprecated status on nodes removed)
-- All kernel functions now require `GraphStore` + `GraphId` (no single-Graph overloads)
+### Changed
+- **Breaking**: `Node.status` removed — supersession is now topology-derived via `effectiveStatus(store, nodeId)`
+- **Breaking**: `NodeStatus` type removed from public API
+- **Breaking**: `EdgeStatus` simplified to binary: `"Active" | "Superseded"` (`"Deprecated"` removed)
+- **Breaking**: `EdgeType` removes `"overrides"` — use `"supersedes"` for replacement relationships
+- **Breaking**: `supersede_node` op removed — supersession is expressed via `supersedes` edges only
+- **Breaking**: `DEPENDENCY_ON_DEPRECATED` violation removed (Deprecated status on nodes removed)
+- **Breaking**: All kernel functions now require `GraphStore` + `GraphId`
 
 ### Added
 - `effectiveStatus(store, nodeId): "Active" | "Superseded"` — topology-derived, sole authority for node supersession
@@ -72,13 +64,14 @@ All notable changes to this project will be documented in this file.
 - All v0.2 golden fixtures updated to v0.4 format (node.status removed, edge.status added)
 - `core.test.ts`: node.status removed from all test data
 
-### Packages
-- `@decisiongraph/core@0.4.2`
-- `@decisiongraph/io-json@0.2.0`
+### Changed
+- Packages updated:
+  - `@decisiongraph/core@0.4.2`
+  - `@decisiongraph/io-json@0.2.0`
 
 ---
 
-## v0.4.2 (2026-03-02)
+## [0.4.2] - 2026-03-02
 
 ### Fixed
 - `@decisiongraph/cli`: `workspace:*` dependencies resolved to explicit versions for npm publish
@@ -93,30 +86,32 @@ All notable changes to this project will be documented in this file.
 - README_ja: added クイックスタート section
 - ROADMAP: removed duplicate Phase 3b section; updated Phase 4 CLI items
 
-### Packages
-- `@decisiongraph/io-json@0.1.1`
-- `@decisiongraph/cli@0.1.2`
+### Changed
+- Packages updated:
+  - `@decisiongraph/io-json@0.1.1`
+  - `@decisiongraph/cli@0.1.2`
 
 ---
 
-## v0.4.1 (2026-03-01)
+## [0.4.1] - 2026-03-01
 
 ### Added
 - `DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)
 - CLI `--strict` flag — treat WARN as ERROR
 
-### Packages
-- `@decisiongraph/core@0.4.1`
-- `@decisiongraph/cli@0.1.0` (initial publish)
+### Changed
+- Packages updated:
+  - `@decisiongraph/core@0.4.1`
+  - `@decisiongraph/cli@0.1.0` (initial publish)
 
 ---
 
-## v0.3.1
+## [0.3.1] - 2026-02-27
 
-### Breaking Changes
-- `Graph` now requires `graphId`
-- `applyBatch`, `lint`, `replay` signatures updated to accept `GraphStore` and `GraphId`
-- All IDs (`NodeId`, `EdgeId`, `CommitId`) are now GraphStore-wide unique
+### Changed
+- **Breaking**: `Graph` now requires `graphId`
+- **Breaking**: `applyBatch`, `lint`, `replay` signatures updated to accept `GraphStore` and `GraphId`
+- **Breaking**: All IDs (`NodeId`, `EdgeId`, `CommitId`) are now GraphStore-wide unique
 
 ### Added
 - `GraphStore` as top-level container (`GraphStore = one world`)
@@ -129,10 +124,3 @@ All notable changes to this project will be documented in this file.
 - CLI `traverse <directory>` command with violation tree display
 - `Violation.payload` for structured context (`fromNodeId`)
 - `traceDependencyPath` kernel function for chain traversal
-
-### Design Decisions
-- **commitId scope: GraphStore-global**
-  - GraphStore = one world; commitId = a point in shared time
-  - `replayAt(commitId)` is deterministic across all graphs
-  - Graph-local commitId uniqueness intentionally not supported in v0.x
-  - Cross-graph fixture runner deferred to Phase 3b

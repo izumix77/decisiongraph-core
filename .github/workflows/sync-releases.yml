@@ -1,0 +1,43 @@
+name: Sync Releases
+
+on:
+  push:
+    paths:
+      - "CHANGELOG.md"
+      - "scripts/**"
+      - ".github/workflows/sync-releases.yml"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout core repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate releases.json
+        run: |
+          npm install
+          npm run build:releases
+
+      - name: Clone site repo
+        run: |
+          git clone https://x-access-token:${{ secrets.SITE_REPO_TOKEN }}@github.com/YOUR_NAME/YOUR_SITE_REPO.git site
+
+      - name: Copy releases.json
+        run: |
+          cp releases.json site/public/releases.json
+
+      - name: Commit & Push
+        run: |
+          cd site
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add public/releases.json
+          git commit -m "update releases.json" || echo "no changes"
+          git push
