@@ -9,37 +9,32 @@ on:
 jobs:
   decision-lint:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - uses: pnpm/action-setup@v4
+          cache: "pnpm"
 
       - name: Install
-        run: pnpm install --frozen-lockfile
-
-      - name: Check io-json version
-        run: cat packages/cli/node_modules/@decisiongraph/io-json/package.json | grep version
+        run: pnpm install
 
       - name: Build
         run: pnpm -w build
 
-      # Smoke test: CLI is operational
-      - name: Lint (smoke test)
-        run: |
-          cat decisions/demo.json
-          node packages/cli/bin/decisiongraph lint decisions/demo.json
+      # 🔥 CLIをpnpm経由で実行（これが安定）
+      - name: Lint decisions
+        run: pnpm exec decisiongraph lint decisions
 
-      # ADR example: expected to FAIL (demonstrates superseded dependency detection)
-      # This is intentional — remove --strict to allow warnings only
-      - name: Traverse (adr example — expected violations)
-        run: |
-          node packages/cli/bin/decisiongraph traverse examples/adr/decisions || true
+      # optional: examples（落ちてもOK）
+      - name: Traverse (adr example)
+        run: pnpm exec decisiongraph traverse examples/adr/decisions || true
 
-      # Broken examples: expected to FAIL (demonstrates ERROR and WARN detection)
-      - name: Traverse (broken examples — expected violations)
-        run: |
-          node packages/cli/bin/decisiongraph traverse examples/broken/decisions || true
+      - name: Traverse (broken examples)
+        run: pnpm exec decisiongraph traverse examples/broken/decisions || true
