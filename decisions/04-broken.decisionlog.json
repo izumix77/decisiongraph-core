@@ -7,10 +7,11 @@
       "node": {
         "id": "N:broken-001",
         "kind": "Decision",
-        "status": "Active",
         "createdAt": "2026-02-27T10:00:00.000Z",
         "author": "A:test",
-        "payload": { "statement": "Depends on old security policy" }
+        "payload": {
+          "statement": "Depends on old security policy"
+        }
       }
     },
     {
@@ -18,10 +19,11 @@
       "node": {
         "id": "N:broken-002",
         "kind": "Decision",
-        "status": "Superseded",
         "createdAt": "2026-02-27T10:01:00.000Z",
         "author": "A:test",
-        "payload": { "statement": "Old auth decision (superseded)" }
+        "payload": {
+          "statement": "Old auth decision (superseded)"
+        }
       }
     },
     {
@@ -36,5 +38,12 @@
         "author": "A:test"
       }
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:31:50.081Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

@@ -7,7 +7,6 @@
       "node": {
         "id": "N:deprecated-001",
         "kind": "Decision",
-        "status": "Deprecated",
         "createdAt": "2026-01-01T00:00:00.000Z",
         "author": "team"
       }
@@ -17,7 +16,6 @@
       "node": {
         "id": "N:active-001",
         "kind": "Decision",
-        "status": "Active",
         "createdAt": "2026-01-01T00:00:01.000Z",
         "author": "team"
       }
@@ -34,5 +32,12 @@
         "author": "team"
       }
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:31:50.084Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

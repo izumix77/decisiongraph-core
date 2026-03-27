@@ -7,7 +7,6 @@
       "node": {
         "id": "N:auth-001",
         "kind": "ADR",
-        "status": "Active",
         "createdAt": "2026-01-15T10:00:00.000Z",
         "author": "A:auth-team",
         "payload": {
@@ -30,9 +29,16 @@
     },
     {
       "type": "commit",
-      "commitId": "C:auth-1",
-      "createdAt": "2026-01-15T10:05:00.000Z",
-      "author": "A:auth-team"
+      "commitId": "migration-1774595615679",
+      "createdAt": "2026-03-27T07:13:35.679Z",
+      "author": "migration-script"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:54:45.466Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

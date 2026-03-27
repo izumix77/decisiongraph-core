@@ -6,7 +6,8 @@
     "build": "turbo build",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
-    "build:releases": "node scripts/changelog-to-json.mjs"
+    "build:releases": "node scripts/changelog-to-json.mjs",
+    "normalize:v04": "node scripts/normalize-to-v04.mjs"
   },
   "devDependencies": {
     "@types/node": "^25.2.1",

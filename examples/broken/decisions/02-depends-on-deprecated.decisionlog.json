@@ -1,5 +1,5 @@
 {
-  "version": "0.3",
+  "version": "0.4",
   "graphId": "G:warn-test",
   "ops": [
     {
@@ -7,10 +7,11 @@
       "node": {
         "id": "N:warn-active-001",
         "kind": "Decision",
-        "status": "Active",
         "createdAt": "2026-02-27T10:00:00.000Z",
         "author": "A:test",
-        "payload": { "statement": "Still depends on a deprecated decision" }
+        "payload": {
+          "statement": "Still depends on a deprecated decision"
+        }
       }
     },
     {
@@ -18,10 +19,11 @@
       "node": {
         "id": "N:warn-deprecated-001",
         "kind": "Decision",
-        "status": "Deprecated",
         "createdAt": "2026-02-27T10:01:00.000Z",
         "author": "A:test",
-        "payload": { "statement": "Legacy policy (deprecated, use new one)" }
+        "payload": {
+          "statement": "Legacy policy (deprecated, use new one)"
+        }
       }
     },
     {
@@ -35,6 +37,19 @@
         "createdAt": "2026-02-27T10:02:00.000Z",
         "author": "A:test"
       }
+    },
+    {
+      "type": "commit",
+      "commitId": "migration-1774595615683",
+      "createdAt": "2026-03-27T07:13:35.683Z",
+      "author": "migration-script"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:54:45.471Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

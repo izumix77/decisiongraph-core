@@ -7,7 +7,6 @@
       "node": {
         "id": "N:adr-003",
         "kind": "ADR",
-        "status": "Active",
         "createdAt": "2026-02-15T10:00:00.000Z",
         "author": "A:alice",
         "payload": {
@@ -31,17 +30,17 @@
       }
     },
     {
-      "type": "supersede_node",
-      "nodeId": "N:adr-001",
-      "supersededAt": "2026-02-15T10:02:00.000Z",
-      "author": "A:alice",
-      "supersedingNodeId": "N:adr-003"
-    },
-    {
       "type": "commit",
-      "commitId": "C:infra-v2-1",
-      "createdAt": "2026-02-15T10:05:00.000Z",
-      "author": "A:alice"
+      "commitId": "migration-1774595615680",
+      "createdAt": "2026-03-27T07:13:35.680Z",
+      "author": "migration-script"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:54:45.468Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

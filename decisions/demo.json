@@ -9,7 +9,9 @@
         "kind": "Demo",
         "createdAt": "2026-02-06T00:00:00.000Z",
         "author": "A:izzy",
-        "payload": { "title": "This should pass" }
+        "payload": {
+          "title": "This should pass"
+        }
       }
     },
     {
@@ -18,5 +20,12 @@
       "createdAt": "2026-02-06T00:00:01.000Z",
       "author": "A:izzy"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:31:50.086Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

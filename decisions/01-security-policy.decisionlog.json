@@ -7,7 +7,6 @@
       "node": {
         "id": "N:sec-policy-001",
         "kind": "Decision",
-        "status": "Active",
         "createdAt": "2026-01-01T10:00:00.000Z",
         "author": "security-team"
       }
@@ -18,5 +17,12 @@
       "createdAt": "2026-01-01T10:05:00.000Z",
       "author": "security-team"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:31:50.061Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

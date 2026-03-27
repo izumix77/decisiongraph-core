@@ -7,7 +7,6 @@
       "node": {
         "id": "N:sec-001",
         "kind": "ADR",
-        "status": "Active",
         "createdAt": "2026-01-05T10:00:00.000Z",
         "author": "A:security-team",
         "payload": {
@@ -18,9 +17,16 @@
     },
     {
       "type": "commit",
-      "commitId": "C:sec-1",
-      "createdAt": "2026-01-05T10:05:00.000Z",
-      "author": "A:security-team"
+      "commitId": "migration-1774595615678",
+      "createdAt": "2026-03-27T07:13:35.678Z",
+      "author": "migration-script"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:54:45.465Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }

@@ -7,7 +7,6 @@
       "node": {
         "id": "N:api-001",
         "kind": "ADR",
-        "status": "Active",
         "createdAt": "2026-01-25T10:00:00.000Z",
         "author": "A:api-team",
         "payload": {
@@ -30,9 +29,16 @@
     },
     {
       "type": "commit",
-      "commitId": "C:api-1",
-      "createdAt": "2026-01-25T10:05:00.000Z",
-      "author": "A:api-team"
+      "commitId": "migration-1774595615665",
+      "createdAt": "2026-03-27T07:13:35.665Z",
+      "author": "migration-script"
     }
-  ]
+  ],
+  "meta": {
+    "migration": {
+      "tool": "normalize-to-v04",
+      "timestamp": "2026-03-27T10:54:45.449Z",
+      "note": "structural normalization only (no author modification)"
+    }
+  }
 }
