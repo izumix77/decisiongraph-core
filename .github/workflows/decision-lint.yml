@@ -28,7 +28,7 @@ jobs:
 
       # 🔥 CLIをpnpm経由で実行（これが安定）
       - name: Lint decisions
-        run: pnpm exec decisiongraph lint decisions
+        run: pnpm --filter @decisiongraph/cli exec decisiongraph lint decisions
 
       # optional: examples（落ちてもOK）
       - name: Traverse (adr example)
