@@ -17,12 +17,5 @@
       "createdAt": "2026-01-01T10:05:00.000Z",
       "author": "security-team"
     }
-  ],
-  "meta": {
-    "migration": {
-      "tool": "normalize-to-v04",
-      "timestamp": "2026-03-27T10:31:50.061Z",
-      "note": "structural normalization only (no author modification)"
-    }
-  }
+  ]
 }

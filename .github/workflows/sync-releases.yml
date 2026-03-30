@@ -26,8 +26,7 @@ jobs:
           npm run build:releases
 
       - name: Clone site repo
-        run: |
-          git clone https://x-access-token:${{ secrets.SITE_REPO_TOKEN }}@github.com/YOUR_NAME/YOUR_SITE_REPO.git site
+        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/izumix77/decisiongraph-core-site.git site
 
       - name: Copy releases.json
         run: |

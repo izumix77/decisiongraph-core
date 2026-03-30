@@ -22,3 +22,6 @@ yarn-error.log*
 **/src/**/*.js
 **/src/**/*.d.ts
 **/src/**/*.map
+
+# Local internal scripts (not for distribution)
+internal/
