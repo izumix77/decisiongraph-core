@@ -29,9 +29,9 @@
     },
     {
       "type": "commit",
-      "commitId": "migration-1774595615665",
-      "createdAt": "2026-03-27T07:13:35.665Z",
-      "author": "migration-script"
+      "commitId": "C:api-001-init",
+      "createdAt": "2026-01-25T10:00:01.000Z",
+      "author": "A:api-team"
     }
   ]
 }

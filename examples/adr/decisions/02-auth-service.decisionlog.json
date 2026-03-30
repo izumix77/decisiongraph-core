@@ -29,9 +29,9 @@
     },
     {
       "type": "commit",
-      "commitId": "migration-1774595615679",
-      "createdAt": "2026-03-27T07:13:35.679Z",
-      "author": "migration-script"
+      "commitId": "C:auth-001-init",
+      "createdAt": "2026-01-15T10:00:01.000Z",
+      "author": "A:auth-team"
     }
   ]
 }

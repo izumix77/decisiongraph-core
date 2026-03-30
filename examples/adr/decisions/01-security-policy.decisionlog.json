@@ -17,9 +17,9 @@
     },
     {
       "type": "commit",
-      "commitId": "migration-1774595615678",
-      "createdAt": "2026-03-27T07:13:35.678Z",
-      "author": "migration-script"
+      "commitId": "C:sec-001-init",
+      "createdAt": "2026-01-05T10:00:01.000Z",
+      "author": "A:security-team"
     }
   ]
 }

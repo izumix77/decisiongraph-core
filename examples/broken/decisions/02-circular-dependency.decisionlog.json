@@ -1,50 +1,50 @@
 {
   "version": "0.4",
-  "graphId": "G:broken",
+  "graphId": "G:circular",
   "ops": [
     {
       "type": "add_node",
       "node": {
-        "id": "N:broken-001",
+        "id": "N:circ-001",
         "kind": "Decision",
         "createdAt": "2026-02-27T10:00:00.000Z",
         "author": "A:test",
         "payload": {
-          "statement": "Depends on old security policy"
+          "statement": "Decision A (depends on C)"
         }
       }
     },
     {
       "type": "add_node",
       "node": {
-        "id": "N:broken-002",
+        "id": "N:circ-002",
         "kind": "Decision",
         "createdAt": "2026-02-27T10:01:00.000Z",
         "author": "A:test",
         "payload": {
-          "statement": "Old auth decision (superseded)"
+          "statement": "Decision B (depends on A)"
         }
       }
     },
     {
       "type": "add_node",
       "node": {
-        "id": "N:broken-003",
+        "id": "N:circ-003",
         "kind": "Decision",
         "createdAt": "2026-02-27T10:02:00.000Z",
         "author": "A:test",
         "payload": {
-          "statement": "New auth decision (supersedes broken-002)"
+          "statement": "Decision C (depends on B)"
         }
       }
     },
     {
       "type": "add_edge",
       "edge": {
-        "id": "E:broken-supersedes-001",
-        "type": "supersedes",
-        "from": "N:broken-003",
-        "to": "N:broken-002",
+        "id": "E:circ-001-depends-003",
+        "type": "depends_on",
+        "from": "N:circ-001",
+        "to": "N:circ-003",
         "status": "Active",
         "createdAt": "2026-02-27T10:03:00.000Z",
         "author": "A:test"
@@ -53,19 +53,31 @@
     {
       "type": "add_edge",
       "edge": {
-        "id": "E:broken-001",
+        "id": "E:circ-002-depends-001",
         "type": "depends_on",
-        "from": "N:broken-001",
-        "to": "N:broken-002",
+        "from": "N:circ-002",
+        "to": "N:circ-001",
         "status": "Active",
         "createdAt": "2026-02-27T10:04:00.000Z",
         "author": "A:test"
       }
     },
     {
+      "type": "add_edge",
+      "edge": {
+        "id": "E:circ-003-depends-002",
+        "type": "depends_on",
+        "from": "N:circ-003",
+        "to": "N:circ-002",
+        "status": "Active",
+        "createdAt": "2026-02-27T10:05:00.000Z",
+        "author": "A:test"
+      }
+    },
+    {
       "type": "commit",
-      "commitId": "C:broken-001-init",
-      "createdAt": "2026-02-27T10:05:00.000Z",
+      "commitId": "C:circular-init",
+      "createdAt": "2026-02-27T10:06:00.000Z",
       "author": "A:test"
     }
   ]
