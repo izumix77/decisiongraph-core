@@ -133,6 +133,7 @@ Supersession is a relationship between nodes, not a property of a node.
   - ✅ `DEPENDENCY_ON_DEPRECATED` detection (Constitution Section 6, WARN)
   - ✅ `--strict` flag — treat WARN as ERROR
   - ✅ `cmdLint` / `cmdLintDir` updated for v0.4 GraphStore — graph initialized via `emptyGraph(graphId)` before ops
+  - ✅ Graceful JSON parse error handling — `validate`, `lint`, `replay`, `diff` return user-friendly messages instead of raw stack traces
 - Visualization / inspection tools
 - Integration examples (ClaimAtom, TraceOS)
 

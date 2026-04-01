@@ -133,6 +133,7 @@ Supersession はノードの属性ではなく、ノード間の関係です。
   - ✅ `DEPENDENCY_ON_DEPRECATED` 検出（Constitution Section 6、WARN）
   - ✅ `--strict` フラグ — WARN を ERROR として扱う
   - ✅ `cmdLint` / `cmdLintDir` v0.4 GraphStore 対応 — `emptyGraph(graphId)` による graph 初期化
+  - ✅ JSON パースエラーの graceful 処理 — `validate`, `lint`, `replay`, `diff` が生のスタックトレースではなくユーザーフレンドリーなメッセージを返すように改善
 - 可視化 / 解析ツール
 - 統合例（ClaimAtom, TraceOS）
 

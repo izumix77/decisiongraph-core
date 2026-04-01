@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.6] - 2026-04-02
+
+### Fixed
+- `@decisiongraph/cli`: wrap `JSON.parse` in try/catch in `validate`, `lint`, `replay`, `diff` commands — malformed JSON input no longer exposes raw stack traces; returns user-friendly error message with file path
+
+---
+
 ## [0.4.5] - 2026-03-20
 
 ### Fixed
