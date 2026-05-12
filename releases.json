@@ -1,13 +1,16 @@
 [
   {
-    "version": "0.4.5",
-    "date": "2026-03-20",
+    "version": "0.4.7",
+    "date": "2026-05-12",
     "sections": [
       {
         "title": "Fixed",
         "items": [
           {
-            "text": "`@decisiongraph/cli`: duplicate violations in `lint <directory>` and `traverse` — `lintStore` was called with `ConstitutionalPolicy` as both internal and caller policy, causing store-level violations to appear twice"
+            "text": "`packages/io-json/package.json`, `packages/schema/package.json` — added missing `\"test\"` script; both packages' test files existed on disk but were never executed by turbo\r"
+          },
+          {
+            "text": "`packages/io-json/test/io.test.ts` — updated stale v0.2 fixture to v0.4 (`version: \"0.2\"` → `\"0.4\"`); test had been silently skipped since the v0.2 → v0.4 wire-format migration\r"
           }
         ]
       },
@@ -15,7 +18,51 @@
         "title": "Changed",
         "items": [
           {
-            "text": "Packages updated:",
+            "text": "`.gitignore` — added `.claude/` entry\r"
+          }
+        ]
+      },
+      {
+        "title": "Tests",
+        "items": [
+          {
+            "text": "**34 passed** (was 32 — io-json and schema test suites now wired into turbo)\r"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.4.6",
+    "date": "2026-04-02",
+    "sections": [
+      {
+        "title": "Fixed",
+        "items": [
+          {
+            "text": "`@decisiongraph/cli`: wrap `JSON.parse` in try/catch in `validate`, `lint`, `replay`, `diff` commands — malformed JSON input no longer exposes raw stack traces; returns user-friendly error message with file path\r"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "version": "0.4.5",
+    "date": "2026-03-20",
+    "sections": [
+      {
+        "title": "Fixed",
+        "items": [
+          {
+            "text": "`@decisiongraph/cli`: duplicate violations in `lint <directory>` and `traverse` — `lintStore` was called with `ConstitutionalPolicy` as both internal and caller policy, causing store-level violations to appear twice\r"
+          }
+        ]
+      },
+      {
+        "title": "Changed",
+        "items": [
+          {
+            "text": "Packages updated:\r",
             "packages": [
               {
                 "name": "@decisiongraph/cli",
@@ -35,34 +82,34 @@
         "title": "Fixed",
         "items": [
           {
-            "text": "`@decisiongraph/schema`: `files` field added to `package.json` — `schemas/` directory was missing from npm published package"
+            "text": "`@decisiongraph/schema`: `files` field added to `package.json` — `schemas/` directory was missing from npm published package\r"
           },
           {
-            "text": "`@decisiongraph/schema`: v0.4 schema upgraded to full implementation — typed discriminated union (`AddNodeOp` / `AddEdgeOp` / `SupersedeEdgeOp` / `CommitOp`) and `Node.status` prohibition (`\"not\": {}`) now enforced at schema layer"
+            "text": "`@decisiongraph/schema`: v0.4 schema upgraded to full implementation — typed discriminated union (`AddNodeOp` / `AddEdgeOp` / `SupersedeEdgeOp` / `CommitOp`) and `Node.status` prohibition (`\"not\": {}`) now enforced at schema layer\r"
           },
           {
-            "text": "`@decisiongraph/io-json` / `@decisiongraph/cli`: `workspace:*` dependencies were not resolved on publish — replaced with explicit version ranges"
+            "text": "`@decisiongraph/io-json` / `@decisiongraph/cli`: `workspace:*` dependencies were not resolved on publish — replaced with explicit version ranges\r"
           },
           {
-            "text": "`@decisiongraph/cli`: `cmdLint` now uses `emptyGraph(graphId)` instead of `emptyStore()` — graph must exist before ops are applied"
+            "text": "`@decisiongraph/cli`: `cmdLint` now uses `emptyGraph(graphId)` instead of `emptyStore()` — graph must exist before ops are applied\r"
           },
           {
-            "text": "`@decisiongraph/cli`: `cmdLintDir` now initializes each graph in store before `applyBatch`"
+            "text": "`@decisiongraph/cli`: `cmdLintDir` now initializes each graph in store before `applyBatch`\r"
           },
           {
-            "text": "`@decisiongraph/schema`: v0.4 JSON Schema added (`schemas/v0.4/decision.schema.json`)"
+            "text": "`@decisiongraph/schema`: v0.4 JSON Schema added (`schemas/v0.4/decision.schema.json`)\r"
           },
           {
-            "text": "`@decisiongraph/io-json`: `version.ts` updated — `\"0.4\"` added to `SUPPORTED_VERSIONS`, `CURRENT_SCHEMA_VERSION` set to `\"0.4\"`"
+            "text": "`@decisiongraph/io-json`: `version.ts` updated — `\"0.4\"` added to `SUPPORTED_VERSIONS`, `CURRENT_SCHEMA_VERSION` set to `\"0.4\"`\r"
           },
           {
-            "text": "`decisions/demo.json` updated to v0.4 format (`version: \"0.4\"`, `graphId` added)"
+            "text": "`decisions/demo.json` updated to v0.4 format (`version: \"0.4\"`, `graphId` added)\r"
           },
           {
-            "text": "CI `decision-lint.yml`: `pnpm install` (was `pnpm -w install`) for full workspace resolution"
+            "text": "CI `decision-lint.yml`: `pnpm install` (was `pnpm -w install`) for full workspace resolution\r"
           },
           {
-            "text": "All workspace dependencies use `workspace:*` for consistent turbo build ordering in CI"
+            "text": "All workspace dependencies use `workspace:*` for consistent turbo build ordering in CI\r"
           }
         ]
       },
@@ -70,7 +117,7 @@
         "title": "Changed",
         "items": [
           {
-            "text": "Packages updated:",
+            "text": "Packages updated:\r",
             "packages": [
               {
                 "name": "@decisiongraph/schema",
@@ -102,7 +149,7 @@
         "title": "Changed",
         "items": [
           {
-            "text": "Packages updated:",
+            "text": "Packages updated:\r",
             "packages": [
               {
                 "name": "@decisiongraph/core",
@@ -120,25 +167,25 @@
         "title": "Added",
         "items": [
           {
-            "text": "`effectiveStatus(store, nodeId): \"Active\" | \"Superseded\"` — topology-derived, sole authority for node supersession"
+            "text": "`effectiveStatus(store, nodeId): \"Active\" | \"Superseded\"` — topology-derived, sole authority for node supersession\r"
           },
           {
-            "text": "`SELF_LOOP` violation code — edge from a node to itself is rejected"
+            "text": "`SELF_LOOP` violation code — edge from a node to itself is rejected\r"
           },
           {
-            "text": "`supersede_edge` atomicity guarantee — old edge marked Superseded and new edge added in single operation"
+            "text": "`supersede_edge` atomicity guarantee — old edge marked Superseded and new edge added in single operation\r"
           },
           {
-            "text": "`ResolvedNode` / `ResolvedEdge` types exported from `@decisiongraph/core`"
+            "text": "`ResolvedNode` / `ResolvedEdge` types exported from `@decisiongraph/core`\r"
           },
           {
-            "text": "`emptyGraph(graphId)` helper for single-graph store initialization"
+            "text": "`emptyGraph(graphId)` helper for single-graph store initialization\r"
           },
           {
-            "text": "Golden fixtures C01–C20 covering all v0.4 constitutional invariants"
+            "text": "Golden fixtures C01–C20 covering all v0.4 constitutional invariants\r"
           },
           {
-            "text": "`io-json/decode.ts` updated to v0.4 (Node.status removed, supersede_node removed)"
+            "text": "`io-json/decode.ts` updated to v0.4 (Node.status removed, supersede_node removed)\r"
           }
         ]
       },
@@ -146,13 +193,13 @@
         "title": "Fixed",
         "items": [
           {
-            "text": "`fixtures.test.ts`: store initialized with `emptyGraph(graphId)` to ensure graph exists before ops"
+            "text": "`fixtures.test.ts`: store initialized with `emptyGraph(graphId)` to ensure graph exists before ops\r"
           },
           {
-            "text": "All v0.2 golden fixtures updated to v0.4 format (node.status removed, edge.status added)"
+            "text": "All v0.2 golden fixtures updated to v0.4 format (node.status removed, edge.status added)\r"
           },
           {
-            "text": "`core.test.ts`: node.status removed from all test data"
+            "text": "`core.test.ts`: node.status removed from all test data\r"
           }
         ]
       }
@@ -166,13 +213,13 @@
         "title": "Fixed",
         "items": [
           {
-            "text": "`@decisiongraph/cli`: `workspace:*` dependencies resolved to explicit versions for npm publish"
+            "text": "`@decisiongraph/cli`: `workspace:*` dependencies resolved to explicit versions for npm publish\r"
           },
           {
-            "text": "`@decisiongraph/io-json`: `workspace:*` dependencies resolved to explicit versions for npm publish"
+            "text": "`@decisiongraph/io-json`: `workspace:*` dependencies resolved to explicit versions for npm publish\r"
           },
           {
-            "text": "Added `.npmrc` to root (`link-workspace-packages=false`) to prevent `workspace:*` from leaking into published packages"
+            "text": "Added `.npmrc` to root (`link-workspace-packages=false`) to prevent `workspace:*` from leaking into published packages\r"
           }
         ]
       },
@@ -180,7 +227,7 @@
         "title": "Changed",
         "items": [
           {
-            "text": "Packages updated:",
+            "text": "Packages updated:\r",
             "packages": [
               {
                 "name": "@decisiongraph/io-json",
@@ -204,10 +251,10 @@
         "title": "Added",
         "items": [
           {
-            "text": "`DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)"
+            "text": "`DEPENDENCY_ON_DEPRECATED` violation code (Constitution Section 6, severity: WARN)\r"
           },
           {
-            "text": "CLI `--strict` flag — treat WARN as ERROR"
+            "text": "CLI `--strict` flag — treat WARN as ERROR\r"
           }
         ]
       },
@@ -215,7 +262,7 @@
         "title": "Changed",
         "items": [
           {
-            "text": "Packages updated:",
+            "text": "Packages updated:\r",
             "packages": [
               {
                 "name": "@decisiongraph/core",
@@ -239,13 +286,13 @@
         "title": "Changed",
         "items": [
           {
-            "text": "**Breaking**: `Graph` now requires `graphId`"
+            "text": "**Breaking**: `Graph` now requires `graphId`\r"
           },
           {
-            "text": "**Breaking**: `applyBatch`, `lint`, `replay` signatures updated to accept `GraphStore` and `GraphId`"
+            "text": "**Breaking**: `applyBatch`, `lint`, `replay` signatures updated to accept `GraphStore` and `GraphId`\r"
           },
           {
-            "text": "**Breaking**: All IDs (`NodeId`, `EdgeId`, `CommitId`) are now GraphStore-wide unique"
+            "text": "**Breaking**: All IDs (`NodeId`, `EdgeId`, `CommitId`) are now GraphStore-wide unique\r"
           }
         ]
       },
@@ -253,31 +300,31 @@
         "title": "Added",
         "items": [
           {
-            "text": "`GraphStore` as top-level container (`GraphStore = one world`)"
+            "text": "`GraphStore` as top-level container (`GraphStore = one world`)\r"
           },
           {
-            "text": "`GraphId` branded type"
+            "text": "`GraphId` branded type\r"
           },
           {
-            "text": "`lintStore` for store-wide cross-graph validation"
+            "text": "`lintStore` for store-wide cross-graph validation\r"
           },
           {
-            "text": "`resolveNode` / `resolveEdge` as first-class kernel operations"
+            "text": "`resolveNode` / `resolveEdge` as first-class kernel operations\r"
           },
           {
-            "text": "`EDGE_NOT_RESOLVED` violation code for unresolvable cross-graph references"
+            "text": "`EDGE_NOT_RESOLVED` violation code for unresolvable cross-graph references\r"
           },
           {
-            "text": "`CIRCULAR_DEPENDENCY` violation code (DFS across graph boundaries)"
+            "text": "`CIRCULAR_DEPENDENCY` violation code (DFS across graph boundaries)\r"
           },
           {
-            "text": "`DEPENDENCY_ON_SUPERSEDED` violation code (Constitution Section 6)"
+            "text": "`DEPENDENCY_ON_SUPERSEDED` violation code (Constitution Section 6)\r"
           },
           {
-            "text": "CLI `traverse <directory>` command with violation tree display"
+            "text": "CLI `traverse <directory>` command with violation tree display\r"
           },
           {
-            "text": "`Violation.payload` for structured context (`fromNodeId`)"
+            "text": "`Violation.payload` for structured context (`fromNodeId`)\r"
           },
           {
             "text": "`traceDependencyPath` kernel function for chain traversal"
