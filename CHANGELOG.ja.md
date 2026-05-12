@@ -2,6 +2,21 @@
 
 このプロジェクトに対するすべての主要な変更はこのファイルに記録されます。
 
+
+## [0.4.7] - 2026-05-12
+
+### 修正
+- `packages/io-json/package.json`、`packages/schema/package.json` — `"test"` スクリプトが欠落しており、テストファイルが存在するにもかかわらず turbo から一度も実行されていなかった
+- `packages/io-json/test/io.test.ts` — v0.2 → v0.4 フォーマット移行時に放置された stale フィクスチャを修正（`version: "0.2"` → `"0.4"`）
+
+### 変更
+- `.gitignore` — `.claude/` を追加
+
+### Tests
+- **34 passed**（旧 32 — io-json・schema テストスイートが turbo に組み込まれた）
+
+---
+
 ## [0.4.6] - 2026-04-02
 
 ### 修正

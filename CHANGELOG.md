@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.7] - 2026-05-12
+
+### Fixed
+- `packages/io-json/package.json`, `packages/schema/package.json` — added missing `"test"` script; both packages' test files existed on disk but were never executed by turbo
+- `packages/io-json/test/io.test.ts` — updated stale v0.2 fixture to v0.4 (`version: "0.2"` → `"0.4"`); test had been silently skipped since the v0.2 → v0.4 wire-format migration
+
+### Changed
+- `.gitignore` — added `.claude/` entry
+
+### Tests
+- **34 passed** (was 32 — io-json and schema test suites now wired into turbo)
+
+---
+
 ## [0.4.6] - 2026-04-02
 
 ### Fixed
