@@ -25,3 +25,5 @@ yarn-error.log*
 
 # Local internal scripts (not for distribution)
 internal/
+# Claude Code
+.claude/
