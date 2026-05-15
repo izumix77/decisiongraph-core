@@ -3,6 +3,18 @@
 このプロジェクトに対するすべての主要な変更はこのファイルに記録されます。
 
 
+## [0.4.8] - 2026-05-15
+
+### CI
+- 全ワークフローで `actions/checkout` と `actions/setup-node` を v5 にアップグレード
+- 全ワークフローで `pnpm/action-setup` を v5 にアップグレード
+- `sync-releases.yml` に `pnpm/action-setup` ステップを追加（欠落していたため `setup-node@v5` が `packageManager` フィールドを検出して pnpm not found エラーが発生していた）
+- `ci.yml` に `pnpm -r test` ステップを追加（これまで CI でテストが実行されていなかった）
+- `security-audit.yml` の `pnpm audit` から `|| true` を削除
+- 全ワークフローで Node.js を 20 から 22 に更新
+
+---
+
 ## [0.4.7] - 2026-05-12
 
 ### 修正

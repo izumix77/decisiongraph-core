@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.8] - 2026-05-15
+
+### CI
+- Upgraded `actions/checkout` and `actions/setup-node` to v5 across all workflows
+- Upgraded `pnpm/action-setup` to v5 across all workflows
+- Added `pnpm/action-setup` step to `sync-releases.yml` (was missing; caused pnpm not found error after setup-node@v5 auto-detects packageManager field)
+- Added `pnpm -r test` step to `ci.yml` (tests were never run in CI previously)
+- Removed `|| true` from `pnpm audit` in `security-audit.yml`
+- Updated Node.js from 20 to 22 across all workflows
+
+---
+
 ## [0.4.7] - 2026-05-12
 
 ### Fixed
