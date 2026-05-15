@@ -33,7 +33,7 @@ jobs:
 
       - name: Copy releases.json
         run: |
-          cp releases.json site/public/releases.json
+          cp releases.json site/data/releases.json
 
       - name: Commit & Push
         run: |
