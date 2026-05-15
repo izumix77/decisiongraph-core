@@ -14,10 +14,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - run: pnpm i --frozen-lockfile
       - name: TypeScript project graph check
         run: pnpm exec tsc -b
       - run: pnpm -r build
+      - run: pnpm -r test
